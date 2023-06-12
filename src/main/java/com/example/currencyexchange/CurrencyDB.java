@@ -10,8 +10,11 @@ public class CurrencyDB {
 
     public CurrencyDB() {
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:Currencies.db");
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:../../Currencies.db");
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         try {
@@ -43,5 +46,6 @@ public class CurrencyDB {
     public PreparedStatement getPreparedStatement() {
         return preparedStatement;
     }
+
 }
 

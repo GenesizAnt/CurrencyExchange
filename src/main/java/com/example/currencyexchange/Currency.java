@@ -20,12 +20,12 @@ public class Currency {
 
     @Override
     public String toString() {
-        return "{\n" +
-                "       \"id\": " + id + ",\n" +
-                "       \"code\": \"" + code + '\"' + ",\n" +
-                "       \"fullName\": \"" + fullName + '\"' + ",\n" +
-                "       \"sign\":\" " + sign + '\"' + "\n" +
-                "}";
+        return "   {\n" +
+                "          \"id\": " + id + ",\n" +
+                "          \"code\": \"" + code + '\"' + ",\n" +
+                "          \"fullName\": \"" + fullName + '\"' + ",\n" +
+                "          \"sign\": \"" + sign + '\"' + "\n" +
+                "   }";
     }
 
     public int getId() {

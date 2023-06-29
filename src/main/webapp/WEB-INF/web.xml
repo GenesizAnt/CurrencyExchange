@@ -15,16 +15,20 @@
         <servlet-name>GetCurrenciesByCodeServlet</servlet-name>
         <servlet-class>com.example.currencyservlet.GetCurrenciesByCodeServlet</servlet-class>
     </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>RouterServlet</servlet-name>-->
+<!--        <servlet-class>com.example.currencyservlet.RouterServlet</servlet-class>-->
+<!--    </servlet>-->
     <servlet-mapping>
         <servlet-name>GetCurrenciesByCodeServlet</servlet-name>
         <url-pattern>/currencies-by-code</url-pattern>
     </servlet-mapping>
-    <servlet>
-        <servlet-name>ControllerCommand</servlet-name>
-        <servlet-class>com.example.currencyservlet.ControllerCommand</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ControllerCommand</servlet-name>
-        <url-pattern>/controller</url-pattern>
-    </servlet-mapping>
+<!--    <servlet>-->
+<!--        <servlet-name>ControllerCommand</servlet-name>-->
+<!--        <servlet-class>com.example.currencyservlet.ControllerCommand</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>ControllerCommand</servlet-name>-->
+<!--        <url-pattern>/controller</url-pattern>-->
+<!--    </servlet-mapping>-->
 </web-app>

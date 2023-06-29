@@ -16,7 +16,7 @@
     <%@page import="java.io.*, java.util.*" %>
 
     <% CurrencyDAO currencyDAO = new CurrencyDAO(); %>
-    <% ArrayList<Currency> currencyList = currencyDAO.getAllCurrent(); %>
+    <% ArrayList<Currency> currencyList = currencyDAO.getAllCurrency(); %>
 
     <%
         PrintWriter pw = response.getWriter();
@@ -29,7 +29,17 @@
             }
         }
         pw.println("]");
+
         %>
+
+        <c:forEach var="clip" items="${clipList}" >
+            <tr>
+                <td>
+                    <c:out value="${clip}"/>
+                </td>
+            </tr>
+        </c:forEach>
+
 
 
 </body>

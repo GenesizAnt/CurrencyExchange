@@ -1,5 +1,7 @@
 package com.example.currencyservlet;
 
+import com.example.currencyexchange.ParserRequest;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;

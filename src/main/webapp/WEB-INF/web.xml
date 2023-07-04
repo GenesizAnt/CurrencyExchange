@@ -3,32 +3,36 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
-    <servlet>
-        <servlet-name>GetCurrenciesServlet</servlet-name>
-        <servlet-class>com.example.currencyservlet.GetCurrenciesServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>GetCurrenciesServlet</servlet-name>
-        <url-pattern>/currencies</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>GetCurrenciesByCodeServlet</servlet-name>
-        <servlet-class>com.example.currencyservlet.GetCurrenciesByCodeServlet</servlet-class>
-    </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>GetCurrenciesServlet</servlet-name>-->
+<!--        <servlet-class>com.example.currencyservlet.GetCurrenciesServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>GetCurrenciesServlet</servlet-name>-->
+<!--        <url-pattern>/currencies</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet>-->
+<!--        <servlet-name>GetCurrenciesByCodeServlet</servlet-name>-->
+<!--        <servlet-class>com.example.currencyservlet.GetCurrenciesByCodeServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet>-->
+<!--        <servlet-name>CurrenciesServlet</servlet-name>-->
+<!--        <servlet-class>com.example.currencyservlet.CurrenciesServlet</servlet-class>-->
+<!--    </servlet>-->
 <!--    <servlet>-->
 <!--        <servlet-name>RouterServlet</servlet-name>-->
 <!--        <servlet-class>com.example.currencyservlet.RouterServlet</servlet-class>-->
 <!--    </servlet>-->
-    <servlet-mapping>
-        <servlet-name>GetCurrenciesByCodeServlet</servlet-name>
-        <url-pattern>/currencies-by-code</url-pattern>
-    </servlet-mapping>
-<!--    <servlet>-->
-<!--        <servlet-name>ControllerCommand</servlet-name>-->
-<!--        <servlet-class>com.example.currencyservlet.ControllerCommand</servlet-class>-->
-<!--    </servlet>-->
 <!--    <servlet-mapping>-->
-<!--        <servlet-name>ControllerCommand</servlet-name>-->
-<!--        <url-pattern>/controller</url-pattern>-->
+<!--        <servlet-name>GetCurrenciesByCodeServlet</servlet-name>-->
+<!--        <url-pattern>/currencies-by-code</url-pattern>-->
 <!--    </servlet-mapping>-->
+    <!--    <servlet>-->
+    <!--        <servlet-name>ControllerCommand</servlet-name>-->
+    <!--        <servlet-class>com.example.currencyservlet.ControllerCommand</servlet-class>-->
+    <!--    </servlet>-->
+    <!--    <servlet-mapping>-->
+    <!--        <servlet-name>ControllerCommand</servlet-name>-->
+    <!--        <url-pattern>/controller</url-pattern>-->
+    <!--    </servlet-mapping>-->
 </web-app>

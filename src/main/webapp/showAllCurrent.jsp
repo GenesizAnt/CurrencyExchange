@@ -11,7 +11,7 @@
     <title>Title</title>
 </head>
 <body>
-    <%@page import="com.example.currencyservlet.CurrencyDAO" %>
+    <%@page import="com.example.currencyexchange.CurrencyDAO" %>
     <%@page import="com.example.currencyexchange.Currency" %>
     <%@page import="java.io.*, java.util.*" %>
 

@@ -1,4 +1,4 @@
-<%@ page import="com.example.currencyservlet.CurrencyDAO" %><%--
+<%@ page import="com.example.currencyexchange.CurrencyDAO" %><%--
   Created by IntelliJ IDEA.
   User: genes
   Date: 26.06.2023

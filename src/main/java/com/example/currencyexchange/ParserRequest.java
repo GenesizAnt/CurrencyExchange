@@ -1,4 +1,6 @@
-package com.example.currencyservlet;
+package com.example.currencyexchange;
+
+import com.example.currencyexchange.ControlQuery;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,8 +37,8 @@ public class ParserRequest {
 
 //        String getByCode = "/currency/EUR";
 
-        String getAllChange = "/exchangeRates";
-        String getChangeByCode = "/exchangeRate/USDRUB";
+//        String getAllChange = "/exchangeRates";
+//        String getChangeByCode = "/exchangeRate/USDRUB";
 
         String getExchange = "/exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT";
 
@@ -58,6 +60,17 @@ public class ParserRequest {
             }
             case "currencies" -> control.getAllCurrency(response);
             case "exchangeRates" -> control.getAllExchangeRates(response);
+            case "exchangeRate" -> {
+                if (splitURL.length > 6 && splitURL[6].length() == 6) {
+                    control.getExchangeRate(splitURL[6], response);
+                } else {
+                    response.setStatus(400);// устанавливаем статус ошибки
+                    response.setContentType("text/html;charset=UTF-8"); // указываем тип контента
+                    PrintWriter writer = response.getWriter();
+                    writer.println("<h1>Ошибка 400</h1>");
+                    writer.print("<p>Код валюты отсутствует в адресе или указан неверно " + request.getRequestURI() + ". Статус ошибки - 400.</p>");
+                }
+            }
 
 
 

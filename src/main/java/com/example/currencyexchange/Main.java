@@ -4,15 +4,44 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static java.math.BigDecimal.ROUND_DOWN;
 
 public class Main {
     public static void main(String[] args) {
 
         Currency currency = new Currency(1, "EUR", "Euro", "E");
         String getByCode = "INSERT INTO currencies (code, fullName, sign) VALUES ('EUR', 'Euro', 'E')";
+
+        String q = "USDRUB";
+        String w = q.substring(0, 3);
+        String e = q.substring(3, 6);
+
+        System.out.println(w + " " + e);
+
+//        BigDecimal bigDecimal = BigDecimal.valueOf(2.15);
+//        BigDecimal amount = BigDecimal.valueOf(10.00);
+//        BigDecimal convertedAmount = amount.multiply(bigDecimal).setScale(2, RoundingMode.HALF_DOWN);
+//        System.out.println(convertedAmount);
+
+        Double bigDecimal = 2.15;
+        Double amount = 10.00;
+        Double convertedAmount = amount / bigDecimal;
+        System.out.println(convertedAmount);
+
+
+        int i = ThreadLocalRandom.current().nextInt(100);
+
+
+        System.out.println(i);
 
 //        String currencyJSON = "{\"id\":1,\"code\":\"RUB\",\"fullName\":\"ryble\",\"sign\":\"R\"}";
 //
@@ -26,12 +55,12 @@ public class Main {
 //            System.out.println("Unsupported Encoding: " + e.getMessage());
 //        }
 
-//        String s = "http://localhost:8080/CurrencyExchange_war_exploded/controller/currency/EUR";
-//        String[] split = s.split("/");
-//        int d = 3;
+        String s = "http://localhost:8080/CurrencyExchange_war_exploded/router/exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT";
+        String[] split = s.split("/");
+        int d = 3;
 
 
-//        System.out.println(currency);
+        System.out.println(Arrays.toString(split));
 
 //        try {
 //            Currency currency1 = objectMapper.readValue(currencyJSON, Currency.class);
@@ -40,13 +69,13 @@ public class Main {
 //            throw new RuntimeException(e);
 //        }
 //        System.out.println(currencyJSON);
-
-        try {
-            String json = objectMapper.writeValueAsString(currency);
-            System.out.println(json);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+//
+//        try {
+//            String json = objectMapper.writeValueAsString(currency);
+//            System.out.println(json);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
 
 //        CurrencyDB currencyDB = new CurrencyDB();
 

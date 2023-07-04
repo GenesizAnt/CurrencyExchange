@@ -17,11 +17,15 @@ public class CurrencyDB {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        try {
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+//        catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//        try {
+//            statement = connection.createStatement();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
 
@@ -36,8 +40,18 @@ public class CurrencyDB {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
+
+
+    public void connect() {
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:../../Currencies.db");
+            this.statement = connection.createStatement();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public Statement getStatement() {
         return statement;

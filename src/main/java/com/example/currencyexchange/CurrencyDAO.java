@@ -113,19 +113,6 @@ public class CurrencyDAO {
                 exchangeRates.setTargetCurrency(getCurrencyByCode(resultSet.getString("target")));
                 exchangeRates.setRate(resultSet.getDouble("rate"));
 
-//                int id = resultSet.getInt("id");
-//                String baseCurrencyId1 = resultSet.getString("baseCurrencyId");
-//                String targetCurrencyId1 = resultSet.getString("targetCurrencyId");
-//                double rate = resultSet.getDouble("rate");
-//
-//                Currency baseCurrencyId = getCurrencyByCode(baseCurrencyId1);
-//                Currency targetCurrencyId = getCurrencyByCode(targetCurrencyId1);
-//
-//                exchangeRates.setId(id);
-//                exchangeRates.setBaseCurrency(baseCurrencyId);
-//                exchangeRates.setTargetCurrency(targetCurrencyId);
-//                exchangeRates.setRate(rate);
-
                 exchangeRatesList.add(exchangeRates);
             }
         } catch (SQLException e) {
@@ -156,35 +143,7 @@ public class CurrencyDAO {
         }
     }
 
-//    public void getAllExchangeRates() {
-//        String getAllCommand = "SELECT * FROM exchangeRates";
-//        ArrayList<Currency> currencyList = new ArrayList<>();
-//
-//        try {
-//            ResultSet resultSet = currencyDB.getStatement().executeQuery(getAllCommand);
-//
-//            while (resultSet.next()) {
-//                Currency currency = new Currency();
-//
-//                currency.setId(resultSet.getInt("id"));
-//                currency.setCode(resultSet.getString("code"));
-//                currency.setFullName(resultSet.getString("fullName"));
-//                currency.setSign(resultSet.getString("sign"));
-//
-//                currencyList.add(currency);
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return currencyList;
-//    }
-
-    public ExchangeRates getExchangeRate(String baseCurrencyId, String targetCurrencyId) {
-
-
-//        String getByExchangeRate = "SELECT *, BaseCurrencyId || \"\" || TargetCurrencyId as combined_column FROM exchangeRates\n" +
-//                "WHERE BaseCurrencyId='" + baseCurrencyId + "' AND TargetCurrencyId='" + targetCurrencyId + "'";
-
+    public PairCurrency getExchangeRate(String baseCurrencyId, String targetCurrencyId) {
 
         String getByExchangeRate = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
                 "FROM exchangeRates\n" +
@@ -230,7 +189,7 @@ public class CurrencyDAO {
         }
     }
 
-    public ExchangeTransaction getExchangeThroughTransaction(String from, String to) {
+    public ArrayList<PairCurrency> getExchangeThroughTransaction(String from, String to) {
 
 
         String getByExchangeRate = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
@@ -243,18 +202,23 @@ public class CurrencyDAO {
             currencyDB.connect();
 
             ResultSet resultSet = currencyDB.getStatement().executeQuery(getByExchangeRate);
+            ArrayList<PairCurrency> pairCurrencies = new ArrayList<>();
 
             if (resultSet.isAfterLast()) {
                 currencyDB.disconnect();
                 return null;
             } else {
-                ExchangeTransaction exchangeTransaction = new ExchangeTransaction();
+                ExchangeRates exchangeRates = new ExchangeRates();
 
-                exchangeTransaction.setExchangeRates(getExchangeRate("USD", from));
-                exchangeTransaction.setDopolnitelmnoyRates(getExchangeRate("USD", to));
+                exchangeRates.setId(resultSet.getInt("id"));
+                exchangeRates.setBaseCurrency(getCurrencyByCode(resultSet.getString("base")));
+                exchangeRates.setTargetCurrency(getCurrencyByCode(resultSet.getString("target")));
+                exchangeRates.setRate(resultSet.getDouble("rate"));
+
+                pairCurrencies.add(exchangeRates);
 
                 currencyDB.disconnect();
-                return exchangeTransaction;
+                return pairCurrencies;
             }
         } catch (
                 SQLException e) {

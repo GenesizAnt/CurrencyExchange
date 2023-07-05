@@ -1,6 +1,5 @@
 package com.example.currencyexchange;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.http.HttpServletResponse;
@@ -109,7 +108,7 @@ public class ControlQuery {
             try {
                 String[] exchangeRatePair = getExchangeRatePair(s);
 //                Currency currencyByCode = currencyDAO.getCurrencyByCode(s);
-                ExchangeRates exchangeRates = currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]); //Todo добавить проверку на нулл
+                ExchangeRates exchangeRates = (ExchangeRates) currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]); //Todo добавить проверку на нулл
                 String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRates);
                 PrintWriter writer = response.getWriter();
                 writer.println(jsonExchangeRate);
@@ -139,26 +138,28 @@ public class ControlQuery {
 
         //ToDo добавить проверку на корректность эмоунт
 
-        ExchangeRates exchangeRate = currencyDAO.getExchangeRate(from, to);
-        ExchangeRates exchangeReversRate = currencyDAO.getExchangeRate(to, from);
-        ExchangeTransaction exchangeThroughRate = currencyDAO.getExchangeThroughTransaction(from, to);
-
-        if (!(exchangeRate == null)) {
-            ExchangeTransaction exchangeTransaction = new ExchangeTransaction(exchangeRate);
-            exchangeTransaction.calculateExchange(amount);
-            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransaction);
+        PairCurrency exchangeTransaction = currencyDAO.getExchangeRate(from, to);
+        PairCurrency exchangeReversRate = currencyDAO.getExchangeRate(to, from);
+        ArrayList<PairCurrency> exchangeThroughRate = currencyDAO.getExchangeThroughTransaction(from, to);
+//
+        if (!(exchangeTransaction == null)) {
+            ExchangeTransaction exchangeTransactionnnnn = new ExchangeTransaction(exchangeTransaction);
+            exchangeTransactionnnnn.calculateExchange(amount);
+            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
             PrintWriter writer = response.getWriter();
             writer.println(jsonExchangeTransaction);
         } else if (!(exchangeReversRate == null)){
-            ExchangeTransaction exchangeTransaction = new ExchangeTransaction(exchangeReversRate);
-            exchangeTransaction.calculateReverseExchange(amount); // сделать обратный расчет курса
-            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransaction);
+            ExchangeTransaction exchangeTransactionnnnn = new ExchangeTransaction(exchangeReversRate);
+            exchangeTransactionnnnn.calculateReverseExchange(amount); // сделать обратный расчет курса
+            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
             PrintWriter writer = response.getWriter();
             writer.println(jsonExchangeTransaction);
         } else if (!(exchangeThroughRate == null)) {
-//            ExchangeTransaction exchangeTransaction = new ExchangeTransaction(exchangeReversRate);
-            exchangeThroughRate.calculateThroughExchange(amount); // сделать расчет через дополнительный курс
-            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeThroughRate);
+            Currency base = currencyDAO.getCurrencyByCode(from);
+            Currency target = currencyDAO.getCurrencyByCode(to);
+            ExchangeTransaction exchangeTransactionnnnn = new ExchangeTransaction(base, target);
+            exchangeTransactionnnnn.calculateThroughExchange(amount, exchangeThroughRate); // сделать расчет через дополнительный курс
+            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
             PrintWriter writer = response.getWriter();
             writer.println(jsonExchangeTransaction);
         } else {

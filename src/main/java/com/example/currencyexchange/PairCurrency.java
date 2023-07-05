@@ -1,9 +1,6 @@
 package com.example.currencyexchange;
 
-import com.example.Views;
-import com.fasterxml.jackson.annotation.JsonView;
-
-public class ExchangeRates extends PairCurrency {
+public abstract class PairCurrency {
 
     private int id;
 
@@ -13,24 +10,7 @@ public class ExchangeRates extends PairCurrency {
 
     private double rate;
 
-    public ExchangeRates(int id, Currency baseCurrency, Currency targetCurrency, double rate) {
-        this.id = id;
-        this.baseCurrency = baseCurrency;
-        this.targetCurrency = targetCurrency;
-        this.rate = rate;
-    }
 
-    public ExchangeRates() {
-
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public Currency getBaseCurrency() {
         return baseCurrency;

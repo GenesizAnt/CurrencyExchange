@@ -119,7 +119,7 @@ public class ControllerCommand extends HttpServlet {
         String nameCurrency = request.getParameter("val2");
         String signCurrency = request.getParameter("amount");
 
-        currencyDAO.postCurrency(codeCurrency, nameCurrency, signCurrency);
+        currencyDAO.insertCurrency(codeCurrency, nameCurrency, signCurrency);
     }
 
 

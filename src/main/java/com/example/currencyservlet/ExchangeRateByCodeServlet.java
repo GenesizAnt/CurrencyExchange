@@ -17,10 +17,31 @@ public class ExchangeRateByCodeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String currencyCode = getCodeFromURL(request);
-        control.getExchangeRate(currencyCode, response);
+        String exchangeRateCode = getCodeFromURL(request);
+        control.getExchangeRate(exchangeRateCode, response);
 
     }
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String method = req.getMethod();
+        if (!(method.equals("PATCH"))) {
+            super.service(req, resp);
+            return;
+        }
+//        String rate = req.getParameter("rate");
+        this.doPatch(req, resp);
+    }
+
+    protected void doPatch(HttpServletRequest request, HttpServletResponse response) {
+
+        String exchangeRateCode = getCodeFromURL(request);
+
+        String rate = request.getParameter("rate");
+
+        control.patchExchangeRate(exchangeRateCode, rate, response);
+    }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -166,4 +166,55 @@ public class ControlQuery {
             //курсы не найдены
         }
     }
+
+    public void postCurrency(String codeCurrency, String nameCurrency, String signCurrency, HttpServletResponse response) {
+
+        currencyDAO.insertCurrency(codeCurrency, nameCurrency, signCurrency);
+
+        try {
+            Currency currencyByCode = currencyDAO.getCurrencyByCode(codeCurrency);
+            String jsonCurrency = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(currencyByCode);
+            PrintWriter writer = response.getWriter();
+            writer.println(jsonCurrency);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void postExchangeRate(String baseCurrencyCodeExc, String targetCurrencyCodeExc, String rateExc, HttpServletResponse response) {
+
+        Currency baseCurrency = currencyDAO.getCurrencyByCode(baseCurrencyCodeExc);
+        Currency targetCurrency = currencyDAO.getCurrencyByCode(targetCurrencyCodeExc);
+        currencyDAO.insertExchangeRate(baseCurrency, targetCurrency, rateExc);
+
+        try {
+            ExchangeRates exchangeRate = (ExchangeRates) currencyDAO.getExchangeRate(baseCurrencyCodeExc, targetCurrencyCodeExc);
+            String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRate);
+            PrintWriter writer = response.getWriter();
+            writer.println(jsonExchangeRate);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void patchExchangeRate(String exchangeRateCode, String rate, HttpServletResponse response) {
+
+        String[] exchangeRatePair = getExchangeRatePair(exchangeRateCode);//Todo добавить проверку на нулл and another
+
+        Currency baseCurrency = currencyDAO.getCurrencyByCode(exchangeRatePair[0]);
+        Currency targetCurrency = currencyDAO.getCurrencyByCode(exchangeRatePair[1]);
+
+        currencyDAO.patchExchangeRate(baseCurrency, targetCurrency, rate);
+
+        try {
+            ExchangeRates exchangeRate = (ExchangeRates) currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]);
+            String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRate);
+            PrintWriter writer = response.getWriter();
+            writer.println(jsonExchangeRate);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+//Todo Проверить чтобы каждый метод содержал коннект и дисконнект
+
 public class CurrencyDAO {
 
     private CurrencyDB currencyDB;
@@ -12,9 +14,7 @@ public class CurrencyDAO {
         this.currencyDB = new CurrencyDB();
     }
 
-    public void postCurrency(String codeCurrency, String nameCurrency, String signCurrency) {
-
-//        String d = "{\"id\":1,\"code\":\"EUR\",\"fullName\":\"Euro\",\"sign\":\"E\"}";
+    public void insertCurrency(String codeCurrency, String nameCurrency, String signCurrency) {
 
         String codeCurrency1 = codeCurrency;
         String nameCurrency1 = nameCurrency;
@@ -224,5 +224,43 @@ public class CurrencyDAO {
                 SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void insertExchangeRate(Currency baseCurrency, Currency targetCurrency, String rateExc) {
+
+//        String baseCurrency1 = baseCurrency;
+//        String targetCurrency1 = targetCurrency;
+//        String rateExc1 = rateExc;
+
+        String getByCode = "INSERT INTO exchangeRates (BaseCurrencyId, TargetCurrencyId, Rate) VALUES ('" + baseCurrency.getId() + "', '" + targetCurrency.getId() + "', '" + rateExc + "')";
+
+        try {
+            currencyDB.connect();
+
+            currencyDB.getStatement().executeUpdate(getByCode);
+
+            currencyDB.disconnect();
+        } catch (
+                SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void patchExchangeRate(Currency s, Currency s1, String rate) {
+
+        String getByCode = "UPDATE exchangeRates SET rate='" + Double.parseDouble(rate) + "' WHERE BaseCurrencyId='" + s.getId() +
+                "' AND TargetCurrencyId='" + s1.getId() + "'";
+
+        try {
+            currencyDB.connect();
+
+            currencyDB.getStatement().executeUpdate(getByCode);
+
+            currencyDB.disconnect();
+        } catch (
+                SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

@@ -22,8 +22,11 @@ public class ExchangeRateServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        //Добавление нового обменного курса в базу. Данные передаются в теле запроса в виде полей формы (x-www-form-urlencoded).
-        // Поля формы - baseCurrencyCode, targetCurrencyCode, rate. Пример полей формы:
+        String baseCurrencyCodeExc = request.getParameter("baseCurrencyCode");
+        String targetCurrencyCodeExc = request.getParameter("targetCurrencyCode");
+        String rateExc = request.getParameter("rate");
+
+        control.postExchangeRate(baseCurrencyCodeExc, targetCurrencyCodeExc, rateExc, response);
 
     }
 }

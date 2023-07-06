@@ -23,6 +23,12 @@ public class CurrenciesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        String codeCurrency = request.getParameter("code");
+        String nameCurrency = request.getParameter("name");
+        String signCurrency = request.getParameter("sign");
+
+        control.postCurrency(codeCurrency, nameCurrency, signCurrency, response);
+
     }
 
 }

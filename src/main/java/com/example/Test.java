@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.*;
+import java.net.*;
+
 public class Test {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         User user = new User();
         user.setName("Tom");
@@ -20,6 +23,39 @@ public class Test {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+
+
+
+        URL url = new URL("http://example.com/servlet-url");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("PATCH");
+        connection.setDoOutput(true);
+        connection.setRequestProperty("Content-Type", "application/json");
+
+        String requestBody = "{\"key\": \"value\"}";
+//
+//        try (OutputStream outputStream = connection.getOutputStream()) {
+//            outputStream.write(requestBody.getBytes());
+//            outputStream.flush();
+//        }
+
+        int responseCode = connection.getResponseCode();
+        String s = connection.getContentEncoding();
+        System.out.println("Response Code: " + responseCode);
+
+// Чтение ответа от сервера
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            String line;
+            StringBuilder response = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            System.out.println("Response: " + response.toString());
+        }
+
+//        connection.disconnect();
+
+
 
     }
 }

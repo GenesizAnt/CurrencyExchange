@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -46,14 +47,10 @@ public class Main {
 //        String currencyJSON = "{\"id\":1,\"code\":\"RUB\",\"fullName\":\"ryble\",\"sign\":\"R\"}";
 //
         ObjectMapper objectMapper = new ObjectMapper();//ToDo сделать красивый JSON https://habr.com/ru/companies/otus/articles/687004/
-//
-//        String originalString = "code=EUR fullName=Euro sign=E";
-//        try {
-//            String encodedString = URLEncoder.encode(originalString, "UTF-8");
-//            System.out.println("Encoded String: " + encodedString);
-//        } catch (UnsupportedEncodingException e) {
-//            System.out.println("Unsupported Encoding: " + e.getMessage());
-//        }
+
+        String originalString = "MyVariableOne=ValueOne&MyVariableTwo=ValueTwo"; //это и есть нужна форма
+        String encodedString = URLEncoder.encode(originalString, StandardCharsets.UTF_8);
+        System.out.println("Encoded String: " + encodedString);
 
         String s = "http://localhost:8080/CurrencyExchange_war_exploded/router/exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT";
         String[] split = s.split("/");

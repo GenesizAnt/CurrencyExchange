@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -12,32 +13,40 @@ public class ControlQuery {
 
     private ObjectMapper objectMapper;
     private CurrencyDAO currencyDAO;
+    private ErrorQuery errorQuery;
 
     public ControlQuery() {
         this.objectMapper = new ObjectMapper();
         this.currencyDAO = new CurrencyDAO();
     }
 
-    public void getCurrency(String s, HttpServletResponse response) {
+    private void getJsonResponse(Object obj, HttpServletResponse response) throws IOException {
+        String jsonRes = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+        PrintWriter writer = response.getWriter();
+        writer.println(jsonRes);
+    }
 
-//        Успех - 200
-//        Валюта не найдена - 404
-//        Ошибка (например, база данных недоступна) - 500
+    public void getCurrency(String codeCurrency, HttpServletResponse response) throws IOException {
 
-        if (s.equals("USD")) {
-            try {
-                Currency currencyByCode = currencyDAO.getCurrencyByCode(s);
-                String jsonCurrency = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(currencyByCode);
-                PrintWriter writer = response.getWriter();
-                writer.println(jsonCurrency);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
+        if (codeCurrency.isEmpty()) {
             response.setStatus(400);
+            errorQuery = new ErrorQuery("No currency code in the address - 400");
+            getJsonResponse(errorQuery, response);
+        } else {
             try {
-                response.sendError(400, "Err");
+                Currency currencyByCode = currencyDAO.getCurrencyByCode(codeCurrency);
+                if (!(currencyByCode == null)) {
+                    response.setStatus(200);
+                    getJsonResponse(currencyByCode, response);
+                } else {
+                    response.setStatus(404);
+                    errorQuery = new ErrorQuery("Currency not found - 404");
+                    getJsonResponse(errorQuery, response);
+                }
             } catch (IOException e) {
+                response.setStatus(500);
+                errorQuery = new ErrorQuery("Database is unavailable - 500");
+                getJsonResponse(errorQuery, response);
                 throw new RuntimeException(e);
             }
         }
@@ -148,7 +157,7 @@ public class ControlQuery {
             String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
             PrintWriter writer = response.getWriter();
             writer.println(jsonExchangeTransaction);
-        } else if (!(exchangeReversRate == null)){
+        } else if (!(exchangeReversRate == null)) {
             ExchangeTransaction exchangeTransactionnnnn = new ExchangeTransaction(exchangeReversRate);
             exchangeTransactionnnnn.calculateReverseExchange(amount); // сделать обратный расчет курса
             String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);

@@ -22,8 +22,8 @@ public class CurrencyDAO {
 
         String getByCode = "INSERT INTO currencies (code, fullName, sign) VALUES ('" + codeCurrency1 + "', '" + nameCurrency1 + "', '" + signCurrency1 + "')";
 
+        currencyDB.connect();
         try {
-            currencyDB.connect();
 
             currencyDB.getStatement().executeUpdate(getByCode);
 
@@ -38,8 +38,8 @@ public class CurrencyDAO {
 
         String getByCode = "SELECT * FROM currencies WHERE code='" + code + "'";
 
+        currencyDB.connect();
         try {
-            currencyDB.connect();
             ResultSet resultSet = currencyDB.getStatement().executeQuery(getByCode);
             Currency currency = new Currency();
 
@@ -48,6 +48,7 @@ public class CurrencyDAO {
             currency.setFullName(resultSet.getString("fullName"));
             currency.setSign(resultSet.getString("sign"));
 
+            resultSet.close();
             currencyDB.disconnect();
             return currency;
         } catch (
@@ -75,6 +76,7 @@ public class CurrencyDAO {
 
                 currencyList.add(currency);
             }
+            resultSet.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -115,6 +117,7 @@ public class CurrencyDAO {
 
                 exchangeRatesList.add(exchangeRates);
             }
+            resultSet.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -131,6 +134,8 @@ public class CurrencyDAO {
             ResultSet resultSet = currencyDB.getStatement().executeQuery(requestSQL);
 
             int isCurrent = resultSet.getInt("is_exists");
+
+            resultSet.close();
 
             if (isCurrent == 1) {
                 return true;
@@ -151,12 +156,13 @@ public class CurrencyDAO {
                 "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n" +
                 "WHERE Base='" + baseCurrencyId + "' AND Target='" + targetCurrencyId + "'";
 
+        currencyDB.connect();
         try {
-            currencyDB.connect();
 
             ResultSet resultSet = currencyDB.getStatement().executeQuery(getByExchangeRate);
 
             if (resultSet.isAfterLast()) {
+                resultSet.close();
                 currencyDB.disconnect();
                 return null;
             } else {
@@ -180,6 +186,7 @@ public class CurrencyDAO {
 //                exchangeRates.setTargetCurrency(targetCurrencyId);
 //                exchangeRates.setRate(rate);
 
+                resultSet.close();
                 currencyDB.disconnect();
                 return exchangeRates;
             }
@@ -205,6 +212,7 @@ public class CurrencyDAO {
             ArrayList<PairCurrency> pairCurrencies = new ArrayList<>();
 
             if (resultSet.isAfterLast()) {
+                resultSet.close();
                 currencyDB.disconnect();
                 return null;
             } else {
@@ -217,6 +225,7 @@ public class CurrencyDAO {
 
                 pairCurrencies.add(exchangeRates);
 
+                resultSet.close();
                 currencyDB.disconnect();
                 return pairCurrencies;
             }
@@ -251,16 +260,16 @@ public class CurrencyDAO {
         String getByCode = "UPDATE exchangeRates SET rate='" + Double.parseDouble(rate) + "' WHERE BaseCurrencyId='" + s.getId() +
                 "' AND TargetCurrencyId='" + s1.getId() + "'";
 
+        currencyDB.connect();
         try {
-            currencyDB.connect();
 
             currencyDB.getStatement().executeUpdate(getByCode);
 
-            currencyDB.disconnect();
         } catch (
                 SQLException e) {
             throw new RuntimeException(e);
         }
 
+        currencyDB.disconnect();
     }
 }

@@ -21,12 +21,15 @@ public class Main {
 
         Currency currency = new Currency(1, "EUR", "Euro", "E");
         String getByCode = "INSERT INTO currencies (code, fullName, sign) VALUES ('EUR', 'Euro', 'E')";
+        String getByCodevv = "http://localhost:8080/CurrencyExchange_war_exploded/currency/USD";
+        String[] splitURL = getByCodevv.split("/");
+        System.out.println(Arrays.toString(splitURL));
 
-        String q = "USDRUB";
-        String w = q.substring(0, 3);
-        String e = q.substring(3, 6);
+//        String q = "USDRUB";
+//        String w = q.substring(0, 3);
+//        String e = q.substring(3, 6);
 
-        System.out.println(w + " " + e);
+//        System.out.println(w + " " + e);
 
 //        BigDecimal bigDecimal = BigDecimal.valueOf(2.15);
 //        BigDecimal amount = BigDecimal.valueOf(10.00);
@@ -44,20 +47,22 @@ public class Main {
 
         System.out.println(i);
 
-//        String currencyJSON = "{\"id\":1,\"code\":\"RUB\",\"fullName\":\"ryble\",\"sign\":\"R\"}";
+        ErrorQuery errorQuery = new ErrorQuery("Код валюты отсутствует в адресе - 400");
+
+//        String currencyJSON = ;
 //
         ObjectMapper objectMapper = new ObjectMapper();//ToDo сделать красивый JSON https://habr.com/ru/companies/otus/articles/687004/
 
-        String originalString = "MyVariableOne=ValueOne&MyVariableTwo=ValueTwo"; //это и есть нужна форма
-        String encodedString = URLEncoder.encode(originalString, StandardCharsets.UTF_8);
-        System.out.println("Encoded String: " + encodedString);
+//        String originalString = "MyVariableOne=ValueOne&MyVariableTwo=ValueTwo"; //это и есть нужна форма
+//        String encodedString = URLEncoder.encode(originalString, StandardCharsets.UTF_8);
+//        System.out.println("Encoded String: " + encodedString);
+//
+//        String s = "http://localhost:8080/CurrencyExchange_war_exploded/router/exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT";
+//        String[] split = s.split("/");
+//        int d = 3;
 
-        String s = "http://localhost:8080/CurrencyExchange_war_exploded/router/exchange?from=BASE_CURRENCY_CODE&to=TARGET_CURRENCY_CODE&amount=$AMOUNT";
-        String[] split = s.split("/");
-        int d = 3;
 
-
-        System.out.println(Arrays.toString(split));
+//        System.out.println(Arrays.toString(split));
 
 //        try {
 //            Currency currency1 = objectMapper.readValue(currencyJSON, Currency.class);
@@ -66,13 +71,13 @@ public class Main {
 //            throw new RuntimeException(e);
 //        }
 //        System.out.println(currencyJSON);
-//
-//        try {
-//            String json = objectMapper.writeValueAsString(currency);
-//            System.out.println(json);
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
+
+        try {
+            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(errorQuery);
+            System.out.println(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
 //        CurrencyDB currencyDB = new CurrencyDB();
 

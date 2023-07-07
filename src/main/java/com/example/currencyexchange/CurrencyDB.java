@@ -11,9 +11,8 @@ public class CurrencyDB {
     public CurrencyDB() {
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:../../Currencies.db");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            connect();
+//            connection = DriverManager.getConnection("jdbc:sqlite:../../Currencies.db");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

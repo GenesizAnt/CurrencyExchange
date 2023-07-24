@@ -1,5 +1,6 @@
 package com.example;
 
+import com.example.currencyexchange.ExchangeRates;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +10,9 @@ import java.net.*;
 
 public class Test {
     public static void main(String[] args) throws IOException {
+
+        ExchangeRates exchangeRates = new ExchangeRates();
+
 
         User user = new User();
         user.setName("Tom");

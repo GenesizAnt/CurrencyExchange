@@ -1,8 +1,5 @@
 package com.example.currencyexchange;
 
-import com.example.Views;
-import com.fasterxml.jackson.annotation.JsonView;
-
 public class ExchangeRates extends PairCurrency {
 
     private int id;

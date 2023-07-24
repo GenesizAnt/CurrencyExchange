@@ -9,6 +9,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.example.Util.getExchangeRatePair;
+import static com.example.Util.getJsonResponse;
+
 public class ControlQuery {
 
     private ObjectMapper objectMapper;
@@ -20,11 +23,6 @@ public class ControlQuery {
         this.currencyDAO = new CurrencyDAO();
     }
 
-    private void getJsonResponse(Object obj, HttpServletResponse response) throws IOException {
-        String jsonRes = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
-        PrintWriter writer = response.getWriter();
-        writer.println(jsonRes);
-    }
 
     public void getCurrency(String codeCurrency, HttpServletResponse response) throws IOException {
 
@@ -53,85 +51,94 @@ public class ControlQuery {
     }
 
     public void getAllCurrency(HttpServletResponse response) throws IOException {
-        ArrayList<Currency> allCurrency = currencyDAO.getAllCurrency();
-        String[] all = new String[allCurrency.size()];
-        for (int i = 0; i < all.length; i++) {
-            all[i] = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(allCurrency.get(i));
+        ArrayList<Currency> allCurrency;
+
+        try {
+            allCurrency = currencyDAO.getAllCurrency();
+        } catch (Exception e) {
+            response.setStatus(500);
+            errorQuery = new ErrorQuery("Database is unavailable - 500");
+            getJsonResponse(errorQuery, response);
+            throw new RuntimeException(e);
         }
 
         PrintWriter writer = response.getWriter();
-        writer.println(Arrays.toString(all));
-
-
-//        for (Currency currency : allCurrency) {
-//            String jsonCurrency = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(currency);
-//            PrintWriter writer = response.getWriter();
-//            writer.println(jsonCurrency);
-//        }
-
-
-//        try {
-//            PrintWriter pw = response.getWriter();
-//            pw.println("[" + "<br>");
-//            for (int i = 0; i < allCurrency.size(); i++) {
-//                if (i == allCurrency.size() - 1) {
-//                    pw.println(allCurrency.get(i).toString() + "<br>") ;
-//                } else {
-//                    pw.println(allCurrency.get(i).toString() + "," + "<br>");
-//                }
-//            }
-//            pw.println("]");
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-
-//ToDo сделать красивый JSON https://habr.com/ru/companies/otus/articles/687004/
-//        HTTP коды ответов:
-//
-//        Успех - 200
-//        Ошибка (например, база данных недоступна) - 500
+        for (Currency currency : allCurrency) {
+            writer.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(currency));
+        }
+        response.setStatus(200);
     }
 
     public void getAllExchangeRates(HttpServletResponse response) throws IOException {
+        ArrayList<ExchangeRates> exchangeRates;
 
-        ArrayList<ExchangeRates> exchangeRates = currencyDAO.getAllExchangeRates();
-        String[] all = new String[exchangeRates.size()];
-
-        for (int i = 0; i < all.length; i++) {
-            all[i] = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRates.get(i));
+        try {
+            exchangeRates = currencyDAO.getAllExchangeRates();
+        } catch (Exception e) {
+            response.setStatus(500);
+            errorQuery = new ErrorQuery("Database is unavailable - 500");
+            getJsonResponse(errorQuery, response);
+            throw new RuntimeException(e);
         }
 
         PrintWriter writer = response.getWriter();
-        writer.println(Arrays.toString(all));
-
-
-//        HTTP коды ответов:
-//
-//        Успех - 200
-//        Ошибка (например, база данных недоступна) - 500
+        for (ExchangeRates rates : exchangeRates) {
+            writer.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rates));
+        }
+        response.setStatus(200);
     }
 
-    public void getExchangeRate(String s, HttpServletResponse response) {
+    public void getExchangeRate(String s, HttpServletResponse response) throws IOException {
 
-        if (s.equals("USDRUB")) {
+        if (s.isEmpty()) {
+            response.setStatus(400);
+            errorQuery = new ErrorQuery("No exchange rate code in the address - 400");
+            getJsonResponse(errorQuery, response);
+        } else {
             try {
                 String[] exchangeRatePair = getExchangeRatePair(s);
-//                Currency currencyByCode = currencyDAO.getCurrencyByCode(s);
-                ExchangeRates exchangeRates = (ExchangeRates) currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]); //Todo добавить проверку на нулл
-                String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRates);
-                PrintWriter writer = response.getWriter();
-                writer.println(jsonExchangeRate);
+                ExchangeRates exchangeRates = (ExchangeRates) currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]);
+                if (!(exchangeRates == null)) {
+                    response.setStatus(200);
+//                    String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRates);
+//                    PrintWriter writer = response.getWriter();
+//                    writer.println(jsonExchangeRate);
+                    getJsonResponse(exchangeRates, response);
+                } else {
+                    response.setStatus(404);
+                    errorQuery = new ErrorQuery("Exchange rate not found - 404");
+                    getJsonResponse(errorQuery, response);
+                }
             } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            response.setStatus(400);
-            try {
-                response.sendError(400, "Err");
-            } catch (IOException e) {
+                response.setStatus(500);
+                errorQuery = new ErrorQuery("Database is unavailable - 500");
+                getJsonResponse(errorQuery, response);
                 throw new RuntimeException(e);
             }
         }
+
+
+
+
+//
+//        if (s.equals("USDRUB")) {
+//            try {
+//                String[] exchangeRatePair = getExchangeRatePair(s);
+//                ExchangeRates exchangeRates = (ExchangeRates) currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]); //Todo добавить проверку на нулл
+//                String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRates);
+//                PrintWriter writer = response.getWriter();
+//                writer.println(jsonExchangeRate);
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        } else {
+//            response.setStatus(400);
+//            try {
+//                response.sendError(400, "Err");
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
 
 
 //        Успех - 200
@@ -139,9 +146,20 @@ public class ControlQuery {
 //        Ошибка (например, база данных недоступна) - 500
     }
 
-    private String[] getExchangeRatePair(String s) {
-        return new String[]{s.substring(0, 3), s.substring(3, 6)};
-    }
+//    private String[] getExchangeRatePair(String s) {
+//        return new String[]{s.substring(0, 3), s.substring(3, 6)};
+//    }
+
+
+
+
+
+
+
+
+
+
+
 
     public void getExchangeTransaction(String from, String to, String amount, HttpServletResponse response) throws IOException {
 
@@ -175,6 +193,18 @@ public class ControlQuery {
             //курсы не найдены
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void postCurrency(String codeCurrency, String nameCurrency, String signCurrency, HttpServletResponse response) {
 

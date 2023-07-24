@@ -41,16 +41,24 @@ public class CurrencyDAO {
         currencyDB.connect();
         try {
             ResultSet resultSet = currencyDB.getStatement().executeQuery(getByCode);
-            Currency currency = new Currency();
 
-            currency.setId(resultSet.getInt("id"));
-            currency.setCode(resultSet.getString("code"));
-            currency.setFullName(resultSet.getString("fullName"));
-            currency.setSign(resultSet.getString("sign"));
+            if (!resultSet.next()) {
+                resultSet.close();
+                currencyDB.disconnect();
+                return null;
+            } else {
 
-            resultSet.close();
-            currencyDB.disconnect();
-            return currency;
+                Currency currency = new Currency();
+
+                currency.setId(resultSet.getInt("id"));
+                currency.setCode(resultSet.getString("code"));
+                currency.setFullName(resultSet.getString("fullName"));
+                currency.setSign(resultSet.getString("sign"));
+
+                resultSet.close();
+                currencyDB.disconnect();
+                return currency;
+            }
         } catch (
                 SQLException e) {
             throw new RuntimeException(e);
@@ -148,7 +156,7 @@ public class CurrencyDAO {
         }
     }
 
-    public PairCurrency getExchangeRate(String baseCurrencyId, String targetCurrencyId) {
+    public ExchangeRates getExchangeRate(String baseCurrencyId, String targetCurrencyId) {
 
         String getByExchangeRate = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
                 "FROM exchangeRates\n" +

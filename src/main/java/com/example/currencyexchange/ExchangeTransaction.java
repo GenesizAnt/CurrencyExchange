@@ -2,7 +2,7 @@ package com.example.currencyexchange;
 
 import java.util.ArrayList;
 
-public class ExchangeTransaction extends PairCurrency {
+public class ExchangeTransaction {
 
     private Currency baseCurrency;
     private Currency targetCurrency;
@@ -28,23 +28,29 @@ public class ExchangeTransaction extends PairCurrency {
         this.rate = pairCurrency.getRate();
     }
 
+    public ExchangeTransaction(ExchangeRates exchangeRates) {
+        this.baseCurrency = exchangeRates.getBaseCurrency();
+        this.targetCurrency = exchangeRates.getTargetCurrency();
+        this.rate = exchangeRates.getRate();
+    }
+
     public ExchangeTransaction() {
 
     }
 
-    public void calculateExchange(String amount) {
-        this.amount = Integer.parseInt(amount);
-        convertedAmount = Integer.parseInt(amount) * rate;
+    public void calculateExchange(int amount) {
+        this.amount = amount;
+        convertedAmount = amount * rate;
     }
 
-    public void calculateReverseExchange(String amount) {
-        this.amount = Integer.parseInt(amount);
-        this.convertedAmount = Integer.parseInt(amount) / rate;
+    public void calculateReverseExchange(int amount) {
+        this.amount = amount;
+        this.convertedAmount = amount / rate;
     }
 
-    public void calculateThroughExchange(String amount, ArrayList<PairCurrency> exchangeThroughRate) {
-        this.amount = Integer.parseInt(amount);
-        double firstExchange = Integer.parseInt(amount) * exchangeThroughRate.get(0).getRate();
+    public void calculateThroughExchange(int amount, ArrayList<ExchangeRates> exchangeThroughRate) {
+        this.amount = amount;
+        double firstExchange = amount * exchangeThroughRate.get(0).getRate();
         this.convertedAmount = firstExchange / exchangeThroughRate.get(1).getRate();
     }
 

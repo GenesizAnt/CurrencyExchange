@@ -204,7 +204,7 @@ public class CurrencyDAO {
         }
     }
 
-    public ArrayList<PairCurrency> getExchangeThroughTransaction(String from, String to) {
+    public ArrayList<ExchangeRates> getExchangeThroughTransaction(String from, String to) {
 
 
         String getByExchangeRate = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
@@ -217,7 +217,7 @@ public class CurrencyDAO {
             currencyDB.connect();
 
             ResultSet resultSet = currencyDB.getStatement().executeQuery(getByExchangeRate);
-            ArrayList<PairCurrency> pairCurrencies = new ArrayList<>();
+            ArrayList<ExchangeRates> pairCurrencies = new ArrayList<>();
 
             if (resultSet.isAfterLast()) {
                 resultSet.close();

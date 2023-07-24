@@ -23,7 +23,6 @@ public class ControlQuery {
         this.currencyDAO = new CurrencyDAO();
     }
 
-
     public void getCurrency(String codeCurrency, HttpServletResponse response) throws IOException {
 
         if (codeCurrency.isEmpty()) {
@@ -83,7 +82,7 @@ public class ControlQuery {
 
         PrintWriter writer = response.getWriter();
         for (ExchangeRates rates : exchangeRates) {
-            writer.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rates));
+            writer.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rates));//ToDo вставить статик метод
         }
         response.setStatus(200);
     }
@@ -97,12 +96,9 @@ public class ControlQuery {
         } else {
             try {
                 String[] exchangeRatePair = getExchangeRatePair(s);
-                ExchangeRates exchangeRates = (ExchangeRates) currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]);
+                ExchangeRates exchangeRates = currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]);
                 if (!(exchangeRates == null)) {
                     response.setStatus(200);
-//                    String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRates);
-//                    PrintWriter writer = response.getWriter();
-//                    writer.println(jsonExchangeRate);
                     getJsonResponse(exchangeRates, response);
                 } else {
                     response.setStatus(404);
@@ -116,68 +112,33 @@ public class ControlQuery {
                 throw new RuntimeException(e);
             }
         }
-
-
-
-
-//
-//        if (s.equals("USDRUB")) {
-//            try {
-//                String[] exchangeRatePair = getExchangeRatePair(s);
-//                ExchangeRates exchangeRates = (ExchangeRates) currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]); //Todo добавить проверку на нулл
-//                String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRates);
-//                PrintWriter writer = response.getWriter();
-//                writer.println(jsonExchangeRate);
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        } else {
-//            response.setStatus(400);
-//            try {
-//                response.sendError(400, "Err");
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-
-
-//        Успех - 200
-//        Обменный курс для пары не найден - 404
-//        Ошибка (например, база данных недоступна) - 500
     }
-
-//    private String[] getExchangeRatePair(String s) {
-//        return new String[]{s.substring(0, 3), s.substring(3, 6)};
-//    }
-
-
-
-
-
-
-
-
-
-
-
 
     public void getExchangeTransaction(String from, String to, String amount, HttpServletResponse response) throws IOException {
 
-        //ToDo добавить проверку на корректность эмоунт
+        int amountPars;
+        try {
+            amountPars = Integer.parseInt(amount);
+        } catch (NumberFormatException e) {
+            response.setStatus(500);
+            errorQuery = new ErrorQuery("Database is unavailable - 500");//ToDo правильно указать ошибку
+            getJsonResponse(errorQuery, response);
+            throw new RuntimeException(e);
+        }
 
-        PairCurrency exchangeTransaction = currencyDAO.getExchangeRate(from, to);
-        PairCurrency exchangeReversRate = currencyDAO.getExchangeRate(to, from);
-        ArrayList<PairCurrency> exchangeThroughRate = currencyDAO.getExchangeThroughTransaction(from, to);
-//
+        ExchangeRates exchangeTransaction = currencyDAO.getExchangeRate(from, to);
+        ExchangeRates exchangeReversRate = currencyDAO.getExchangeRate(to, from);
+        ArrayList<ExchangeRates> exchangeThroughRate = currencyDAO.getExchangeThroughTransaction(from, to);
+
         if (!(exchangeTransaction == null)) {
             ExchangeTransaction exchangeTransactionnnnn = new ExchangeTransaction(exchangeTransaction);
-            exchangeTransactionnnnn.calculateExchange(amount);
+            exchangeTransactionnnnn.calculateExchange(amountPars);
             String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
             PrintWriter writer = response.getWriter();
             writer.println(jsonExchangeTransaction);
         } else if (!(exchangeReversRate == null)) {
             ExchangeTransaction exchangeTransactionnnnn = new ExchangeTransaction(exchangeReversRate);
-            exchangeTransactionnnnn.calculateReverseExchange(amount); // сделать обратный расчет курса
+            exchangeTransactionnnnn.calculateReverseExchange(amountPars); // сделать обратный расчет курса
             String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
             PrintWriter writer = response.getWriter();
             writer.println(jsonExchangeTransaction);
@@ -185,26 +146,16 @@ public class ControlQuery {
             Currency base = currencyDAO.getCurrencyByCode(from);
             Currency target = currencyDAO.getCurrencyByCode(to);
             ExchangeTransaction exchangeTransactionnnnn = new ExchangeTransaction(base, target);
-            exchangeTransactionnnnn.calculateThroughExchange(amount, exchangeThroughRate); // сделать расчет через дополнительный курс
+            exchangeTransactionnnnn.calculateThroughExchange(amountPars, exchangeThroughRate); // сделать расчет через дополнительный курс
             String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
             PrintWriter writer = response.getWriter();
             writer.println(jsonExchangeTransaction);
         } else {
-            //курсы не найдены
+            response.setStatus(404);
+            errorQuery = new ErrorQuery("Exchange transaction rate not found - 404");
+            getJsonResponse(errorQuery, response);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
 
     public void postCurrency(String codeCurrency, String nameCurrency, String signCurrency, HttpServletResponse response) {
 

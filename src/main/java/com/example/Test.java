@@ -8,10 +8,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
 import java.net.*;
 
+import static com.example.Util.checkAmount;
+
 public class Test {
     public static void main(String[] args) throws IOException {
 
-        ExchangeRates exchangeRates = new ExchangeRates();
+        System.out.println(checkAmount("10k"));
 
 
         User user = new User();

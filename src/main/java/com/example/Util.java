@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 
 public class Util {
 
-    static ObjectMapper objectMapper;
+    static ObjectMapper objectMapper = new ObjectMapper();
     public static String getCodeFromURL(HttpServletRequest request) {
         String url = request.getRequestURI();
         String[] splitURL = url.split("/");
@@ -28,6 +28,23 @@ public class Util {
 
     public static String[] getExchangeRatePair(String s) {
         return new String[]{s.substring(0, 3), s.substring(3, 6)};
+    }
+
+    public static boolean checkAmount(String amount) {
+
+        if (Integer.valueOf(amount) != null) {
+            int num = Integer.parseInt(amount);
+            return true;
+        } else {
+            return false;
+        }
+
+//        try {
+//            int amountPars = Integer.parseInt(amount);
+//            return true;
+//        } catch (NumberFormatException e) {
+//            return false;
+//        }
     }
 
 }

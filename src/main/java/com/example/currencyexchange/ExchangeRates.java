@@ -1,6 +1,6 @@
 package com.example.currencyexchange;
 
-public class ExchangeRates extends PairCurrency {
+public class ExchangeRates {
 
     private int id;
 

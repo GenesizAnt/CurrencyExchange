@@ -157,54 +157,94 @@ public class ControlQuery {
         }
     }
 
-    public void postCurrency(String codeCurrency, String nameCurrency, String signCurrency, HttpServletResponse response) {
+    public void postCurrency(String codeCurrency, String nameCurrency, String signCurrency, HttpServletResponse response) throws IOException {
 
-        currencyDAO.insertCurrency(codeCurrency, nameCurrency, signCurrency);
+        Currency currencyByCode = currencyDAO.getCurrencyByCode(codeCurrency);
 
-        try {
-            Currency currencyByCode = currencyDAO.getCurrencyByCode(codeCurrency);
-            String jsonCurrency = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(currencyByCode);
-            PrintWriter writer = response.getWriter();
-            writer.println(jsonCurrency);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (!(currencyByCode == null)) {
+            response.setStatus(409);
+            errorQuery = new ErrorQuery("Currency with this code already exists - 409");
+            getJsonResponse(errorQuery, response);
+        } else {
+            currencyDAO.insertCurrency(codeCurrency, nameCurrency, signCurrency);
+
+            try {
+                currencyByCode = currencyDAO.getCurrencyByCode(codeCurrency);
+                response.setStatus(200);
+                getJsonResponse(currencyByCode, response);
+//            String jsonCurrency = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(currencyByCode);
+//            PrintWriter writer = response.getWriter();
+//            writer.println(jsonCurrency);
+            } catch (IOException e) {
+                response.setStatus(500);
+                errorQuery = new ErrorQuery("Database is unavailable - 500");
+                getJsonResponse(errorQuery, response);
+                throw new RuntimeException(e);
+            }
+
         }
     }
 
-    public void postExchangeRate(String baseCurrencyCodeExc, String targetCurrencyCodeExc, String rateExc, HttpServletResponse response) {
+    public void postExchangeRate(String baseCurrencyCodeExc, String targetCurrencyCodeExc, String rateExc, HttpServletResponse response) throws IOException {
 
-        Currency baseCurrency = currencyDAO.getCurrencyByCode(baseCurrencyCodeExc);
+        Currency baseCurrency = currencyDAO.getCurrencyByCode(baseCurrencyCodeExc); //Todo проверить существуют ли такие валюты
         Currency targetCurrency = currencyDAO.getCurrencyByCode(targetCurrencyCodeExc);
-        currencyDAO.insertExchangeRate(baseCurrency, targetCurrency, rateExc);
 
-        try {
-            ExchangeRates exchangeRate = (ExchangeRates) currencyDAO.getExchangeRate(baseCurrencyCodeExc, targetCurrencyCodeExc);
-            String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRate);
-            PrintWriter writer = response.getWriter();
-            writer.println(jsonExchangeRate);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        ExchangeRates exchangeRate = currencyDAO.getExchangeRate(baseCurrencyCodeExc, targetCurrencyCodeExc);
+
+        if (!(exchangeRate == null)) {
+            response.setStatus(409);
+            errorQuery = new ErrorQuery("Currency with this code already exists - 409");
+            getJsonResponse(errorQuery, response);
+        } else {
+            currencyDAO.insertExchangeRate(baseCurrency, targetCurrency, rateExc);
+            try {
+                exchangeRate = currencyDAO.getExchangeRate(baseCurrencyCodeExc, targetCurrencyCodeExc);
+                response.setStatus(200);
+                getJsonResponse(exchangeRate, response);
+//                String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRate);
+//                PrintWriter writer = response.getWriter();
+//                writer.println(jsonExchangeRate);
+            } catch (IOException e) {
+                response.setStatus(500);
+                errorQuery = new ErrorQuery("Database is unavailable - 500");
+                getJsonResponse(errorQuery, response);
+                throw new RuntimeException(e);
+            }
         }
-
     }
 
-    public void patchExchangeRate(String exchangeRateCode, String rate, HttpServletResponse response) {
+    public void patchExchangeRate(String exchangeRateCode, String rate, HttpServletResponse response) throws IOException {
 
         String[] exchangeRatePair = getExchangeRatePair(exchangeRateCode);//Todo добавить проверку на нулл and another
 
         Currency baseCurrency = currencyDAO.getCurrencyByCode(exchangeRatePair[0]);
         Currency targetCurrency = currencyDAO.getCurrencyByCode(exchangeRatePair[1]);
 
-        currencyDAO.patchExchangeRate(baseCurrency, targetCurrency, rate);
+        ExchangeRates exchangeRate = currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]);
 
-        try {
-            ExchangeRates exchangeRate = (ExchangeRates) currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]);
-            String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRate);
-            PrintWriter writer = response.getWriter();
-            writer.println(jsonExchangeRate);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (exchangeRate == null) {
+            response.setStatus(409);
+            errorQuery = new ErrorQuery("Exchange transaction rate not found - 404");
+            getJsonResponse(errorQuery, response);
+        } else {
+            currencyDAO.patchExchangeRate(baseCurrency, targetCurrency, rate);
+
+            try {
+                exchangeRate = currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]);
+                response.setStatus(200);
+                getJsonResponse(exchangeRate, response);
+            } catch (IOException e) {
+                response.setStatus(500);
+                errorQuery = new ErrorQuery("Database is unavailable - 500");
+                getJsonResponse(errorQuery, response);
+                throw new RuntimeException(e);
+            }
         }
+
+
 
     }
 }
+
+//Todo добавить везде проверку корректности ввода валют и прочее. Например добавить класс ЧекВалидЗапрос или в класс Ютил

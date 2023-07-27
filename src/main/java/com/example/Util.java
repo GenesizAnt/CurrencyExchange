@@ -26,8 +26,8 @@ public class Util {
         writer.println(jsonRes);
     }
 
-    public static String[] getExchangeRatePair(String s) {
-        return new String[]{s.substring(0, 3), s.substring(3, 6)};
+    public static String[] getExchangeRatePair(String exchangeRate) {
+        return new String[]{exchangeRate.substring(0, 3), exchangeRate.substring(3, 6)};
     }
 
     public static boolean checkAmount(String amount) {

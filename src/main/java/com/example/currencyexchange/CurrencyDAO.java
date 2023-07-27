@@ -16,7 +16,7 @@ public class CurrencyDAO {
 
     public void insertCurrency(String codeCurrency, String nameCurrency, String signCurrency) {
 
-        String codeCurrency1 = codeCurrency;
+        String codeCurrency1 = codeCurrency; //ToDo зачем создать переменные???????
         String nameCurrency1 = nameCurrency;
         String signCurrency1 = signCurrency;
 
@@ -169,7 +169,7 @@ public class CurrencyDAO {
 
             ResultSet resultSet = currencyDB.getStatement().executeQuery(getByExchangeRate);
 
-            if (resultSet.isAfterLast()) {
+            if (!resultSet.next()) {
                 resultSet.close();
                 currencyDB.disconnect();
                 return null;
@@ -219,10 +219,16 @@ public class CurrencyDAO {
             ResultSet resultSet = currencyDB.getStatement().executeQuery(getByExchangeRate);
             ArrayList<ExchangeRates> pairCurrencies = new ArrayList<>();
 
-            if (resultSet.isAfterLast()) {
+            if (!resultSet.next()) {
                 resultSet.close();
                 currencyDB.disconnect();
                 return null;
+
+//                if (resultSet.isAfterLast()) {
+//                    resultSet.close();
+//                    currencyDB.disconnect();
+//                    return null;
+
             } else {
                 ExchangeRates exchangeRates = new ExchangeRates();
 

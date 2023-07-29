@@ -24,6 +24,9 @@ public class Main {
         String getByCodevv = "http://localhost:8080/CurrencyExchange_war_exploded/currency/USD";
         String[] splitURL = getByCodevv.split("/");
         System.out.println(Arrays.toString(splitURL));
+        String urll = "http://localhost:8080/CurrencyExchange_war_exploded/exchangeRate/USDRUB";
+        String[] splitURLdd = urll.split("/");
+        System.out.println(Arrays.toString(splitURLdd) + splitURLdd.length);
 
 //        String q = "USDRUB";
 //        String w = q.substring(0, 3);

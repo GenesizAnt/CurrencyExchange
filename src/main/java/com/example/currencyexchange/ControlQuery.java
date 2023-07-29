@@ -61,10 +61,10 @@ public class ControlQuery {
             throw new RuntimeException(e);
         }
 
-        PrintWriter writer = response.getWriter();
         for (Currency currency : allCurrency) {
-            writer.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(currency));
+            getJsonResponse(currency, response);
         }
+
         response.setStatus(200);
     }
 
@@ -89,11 +89,13 @@ public class ControlQuery {
 
     public void getExchangeRate(String s, HttpServletResponse response) throws IOException {
 
-        if (s.isEmpty()) {
-            response.setStatus(400);
-            errorQuery = new ErrorQuery("No exchange rate code in the address - 400");
-            getJsonResponse(errorQuery, response);
-        } else {
+//        String[] exchangeRateCode = getExchangeRatePair(s);
+
+//        if (s.isEmpty()) {
+//            response.setStatus(400);
+//            errorQuery = new ErrorQuery("No exchange rate code in the address - 400");
+//            getJsonResponse(errorQuery, response);
+//        } else {
             try {
                 String[] exchangeRatePair = getExchangeRatePair(s);
                 ExchangeRates exchangeRates = currencyDAO.getExchangeRate(exchangeRatePair[0], exchangeRatePair[1]);
@@ -111,45 +113,62 @@ public class ControlQuery {
                 getJsonResponse(errorQuery, response);
                 throw new RuntimeException(e);
             }
-        }
+//        }
     }
 
     public void getExchangeTransaction(String from, String to, String amount, HttpServletResponse response) throws IOException {
 
-        int amountPars;
+        int amountPars = Integer.parseInt(amount);
+        ExchangeRates exchangeTransaction;
+        ExchangeRates exchangeReversRate;
+        ArrayList<ExchangeRates> exchangeThroughRate;
+
+//        try {
+//            amountPars = Integer.parseInt(amount);
+//        } catch (NumberFormatException e) {
+//            response.setStatus(500);
+//            errorQuery = new ErrorQuery("Database is unavailable - 500");//ToDo правильно указать ошибку
+//            getJsonResponse(errorQuery, response);
+//            throw new RuntimeException(e);
+//        }
+
         try {
-            amountPars = Integer.parseInt(amount);
-        } catch (NumberFormatException e) {
+            exchangeTransaction = currencyDAO.getExchangeRate(from, to);
+            exchangeReversRate = currencyDAO.getExchangeRate(to, from);
+            exchangeThroughRate = currencyDAO.getExchangeThroughTransaction(from, to);
+        } catch (Exception e) {
             response.setStatus(500);
-            errorQuery = new ErrorQuery("Database is unavailable - 500");//ToDo правильно указать ошибку
+            errorQuery = new ErrorQuery("Database is unavailable - 500");
             getJsonResponse(errorQuery, response);
             throw new RuntimeException(e);
         }
 
-        ExchangeRates exchangeTransaction = currencyDAO.getExchangeRate(from, to);
-        ExchangeRates exchangeReversRate = currencyDAO.getExchangeRate(to, from);
-        ArrayList<ExchangeRates> exchangeThroughRate = currencyDAO.getExchangeThroughTransaction(from, to);
-
         if (!(exchangeTransaction == null)) {
             ExchangeTransaction exchangeTransactionnnnn = new ExchangeTransaction(exchangeTransaction);
             exchangeTransactionnnnn.calculateExchange(amountPars);
-            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
-            PrintWriter writer = response.getWriter();
-            writer.println(jsonExchangeTransaction);
+            response.setStatus(200);
+            getJsonResponse(exchangeTransactionnnnn, response);
+//            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
+//            PrintWriter writer = response.getWriter();
+//            writer.println(jsonExchangeTransaction);
         } else if (!(exchangeReversRate == null)) {
             ExchangeTransaction exchangeTransactionnnnn = new ExchangeTransaction(exchangeReversRate);
             exchangeTransactionnnnn.calculateReverseExchange(amountPars); // сделать обратный расчет курса
-            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
-            PrintWriter writer = response.getWriter();
-            writer.println(jsonExchangeTransaction);
+            response.setStatus(200);
+            getJsonResponse(exchangeTransactionnnnn, response);
+//            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
+//            PrintWriter writer = response.getWriter();
+//            writer.println(jsonExchangeTransaction);
         } else if (!(exchangeThroughRate == null)) {
             Currency base = currencyDAO.getCurrencyByCode(from);
             Currency target = currencyDAO.getCurrencyByCode(to);
             ExchangeTransaction exchangeTransactionnnnn = new ExchangeTransaction(base, target);
             exchangeTransactionnnnn.calculateThroughExchange(amountPars, exchangeThroughRate); // сделать расчет через дополнительный курс
-            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
-            PrintWriter writer = response.getWriter();
-            writer.println(jsonExchangeTransaction);
+            response.setStatus(200);
+            getJsonResponse(exchangeTransactionnnnn, response);
+//            String jsonExchangeTransaction = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeTransactionnnnn);
+//            PrintWriter writer = response.getWriter();
+//            writer.println(jsonExchangeTransaction);
         } else {
             response.setStatus(404);
             errorQuery = new ErrorQuery("Exchange transaction rate not found - 404");
@@ -166,6 +185,7 @@ public class ControlQuery {
             errorQuery = new ErrorQuery("Currency with this code already exists - 409");
             getJsonResponse(errorQuery, response);
         } else {
+
             currencyDAO.insertCurrency(codeCurrency, nameCurrency, signCurrency);
 
             try {

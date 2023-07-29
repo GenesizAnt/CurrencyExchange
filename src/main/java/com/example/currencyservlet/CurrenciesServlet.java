@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 
+import static com.example.Util.CORRECT_LETTER_COUNT_CURRENT_NAME;
 import static com.example.Util.getJsonResponse;
 
 @WebServlet("/currencies")
@@ -33,20 +34,23 @@ public class CurrenciesServlet extends HttpServlet {
         String nameCurrency = request.getParameter("name");
         String signCurrency = request.getParameter("sign");
 
-        if (codeCurrency.equals(empty)) {
+        if (codeCurrency.equals(empty) || codeCurrency.length() != CORRECT_LETTER_COUNT_CURRENT_NAME ||
+                codeCurrency.matches("\\d+") || !(codeCurrency.matches("[a-zA-Z]+"))) {
             response.setStatus(400);
-            errorQuery = new ErrorQuery("Code currency" + codeCurrency + " is empty - 400");
+            errorQuery = new ErrorQuery("Code currency " + codeCurrency + " is empty or incorrect - 400");
             getJsonResponse(errorQuery, response);
         } else if (nameCurrency.equals(empty)) {
             response.setStatus(400);
-            errorQuery = new ErrorQuery("Name currency" + nameCurrency + " is empty - 400");
+            errorQuery = new ErrorQuery("Name currency " + nameCurrency + " is empty or incorrect - 400");
             getJsonResponse(errorQuery, response);
-        } else if (signCurrency.equals(empty)) {
+        } else if (signCurrency.equals(empty) || !(signCurrency.matches("\\p{ASCII}")) || signCurrency.matches("\\d+")) {
             response.setStatus(400);
-            errorQuery = new ErrorQuery("Sign currency" + signCurrency + " is empty - 400");
+            errorQuery = new ErrorQuery("Sign currency " + signCurrency + " is empty or incorrect - 400");
             getJsonResponse(errorQuery, response);
         } else {
+
             control.postCurrency(codeCurrency, nameCurrency, signCurrency, response);
+
         }
     }
 

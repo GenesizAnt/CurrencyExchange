@@ -62,7 +62,7 @@ public class ParserRequest {
             case "exchangeRates" -> control.getAllExchangeRates(response);
             case "exchangeRate" -> {
                 if (splitURL.length > 6 && splitURL[6].length() == 6) {
-                    control.getExchangeRate(splitURL[6], response);
+//                    control.getExchangeRate(splitURL[6], response);
                 } else {
                     response.setStatus(400);// устанавливаем статус ошибки
                     response.setContentType("text/html;charset=UTF-8"); // указываем тип контента

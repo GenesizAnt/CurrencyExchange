@@ -1,27 +1,32 @@
 package com.example.currencyservlet;
 
 import com.example.currencyexchange.ControlQuery;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.currencyexchange.ErrorQuery;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 
-import static com.example.Util.getCodeFromURL;
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
+import static com.example.Util.*;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateByCodeServlet extends HttpServlet {
 
     private ControlQuery control = new ControlQuery();
+    private ErrorQuery errorQuery;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String exchangeRateCode = getCodeFromURL(request);
-        control.getExchangeRate(exchangeRateCode, response);
-
+        if (isCorrectCodeExchangeRates(request)) {
+            String exchangeRateCode = getCodeFromURL(request);
+            control.getExchangeRate(exchangeRateCode, response);
+        } else {
+            response.setStatus(400);
+            errorQuery = new ErrorQuery("Incorrect request - 400");
+            getJsonResponse(errorQuery, response);
+        }
     }
 
     @Override
@@ -44,12 +49,18 @@ public class ExchangeRateByCodeServlet extends HttpServlet {
 ////            objectMapper.writeValue(response.getWriter(), "Missing required parameter rate");
 //            return;
 //        }
-
-        String exchangeRateCode = getCodeFromURL(request);
-
+        String empty = "";
         String rate = request.getParameter("rate");
 
-        control.patchExchangeRate(exchangeRateCode, rate, response);
+        if (isCorrectCodeExchangeRates(request) && !(rate.equals(empty)) && rate.matches("\\d*[.]?\\d{1,6}\\b")
+                && !(rate.matches("[a-zA-Zа-яА-Я]+"))) {
+            String exchangeRateCode = getCodeFromURL(request);
+            control.patchExchangeRate(exchangeRateCode, rate, response);
+        } else {
+            response.setStatus(400);
+            errorQuery = new ErrorQuery("Incorrect request - 400");
+            getJsonResponse(errorQuery, response);
+        }
     }
 
 

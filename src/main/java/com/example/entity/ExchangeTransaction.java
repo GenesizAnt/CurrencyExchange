@@ -1,4 +1,4 @@
-package com.example.currencyexchange;
+package com.example.entity;
 
 import java.util.ArrayList;
 
@@ -6,29 +6,16 @@ public class ExchangeTransaction {
 
     private Currency baseCurrency;
     private Currency targetCurrency;
-
-//    private ExchangeRates exchangeRates; // база передает только обменные курсы, один или два если надо
-//
-//    private ExchangeRates dopolnitelmnoyRates;
-
     private double rate;
-    private double amount; // считается после возвращения данных обмена из базы в классе КонтролКвери. Можно сдеать через один метод - передаем кол-во
-    //в нем же считаем convertedAmount
+    private double amount;
     private double convertedAmount;
-
 
     public ExchangeTransaction(Currency baseCurrency, Currency targetCurrency) {
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
     }
 
-    public ExchangeTransaction(PairCurrency pairCurrency) {
-        this.baseCurrency = pairCurrency.getBaseCurrency();
-        this.targetCurrency = pairCurrency.getTargetCurrency();
-        this.rate = pairCurrency.getRate();
-    }
-
-    public ExchangeTransaction(ExchangeRates exchangeRates) {
+    public ExchangeTransaction(ExchangeRate exchangeRates) {
         this.baseCurrency = exchangeRates.getBaseCurrency();
         this.targetCurrency = exchangeRates.getTargetCurrency();
         this.rate = exchangeRates.getRate();
@@ -38,20 +25,20 @@ public class ExchangeTransaction {
 
     }
 
-    public void calculateExchange(int amount) {
+    public void calculateExchangeTransaction(double amount) {
         this.amount = amount;
         convertedAmount = amount * rate;
     }
 
-    public void calculateReverseExchange(int amount) {
+    public void calculateReverseExchangeTransaction(double amount) {
         this.amount = amount;
         this.convertedAmount = amount / rate;
     }
 
-    public void calculateThroughExchange(int amount, ArrayList<ExchangeRates> exchangeThroughRate) {
+    public void calculateExchangeTransactionThroughUSD(double amount, ArrayList<ExchangeRate> exchangeRatesThroughUSD) {
         this.amount = amount;
-        double firstExchange = amount * exchangeThroughRate.get(0).getRate();
-        this.convertedAmount = firstExchange / exchangeThroughRate.get(1).getRate();
+        double ExchangeOnUSD = amount * exchangeRatesThroughUSD.get(0).getRate();
+        this.convertedAmount = ExchangeOnUSD / exchangeRatesThroughUSD.get(1).getRate();
     }
 
 

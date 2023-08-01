@@ -1,20 +1,20 @@
-package com.example.currencyservlet;
+package currencyservlet;
 
-import com.example.currencyexchange.ControlQuery;
-import com.example.currencyexchange.ErrorQuery;
+import com.example.controller.QueriesControl;
+import com.example.entity.ErrorQuery;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 
-import static com.example.Util.CORRECT_LETTER_COUNT_CURRENT_NAME;
+import static com.example.Util.CORRECT_COUNT_LETTER_CURRENCY_NAME;
 import static com.example.Util.getJsonResponse;
 
 @WebServlet("/exchange")
 public class ExchangeCurrenciesServlet extends HttpServlet {
 
-    private ControlQuery control = new ControlQuery();
+    private QueriesControl queriesControl = new QueriesControl();
     private ErrorQuery errorQuery;
 
     @Override
@@ -22,21 +22,19 @@ public class ExchangeCurrenciesServlet extends HttpServlet {
 
         String empty = "";
 
-        String from = request.getParameter("from");
-        String to = request.getParameter("to");
+        String baseCurrency = request.getParameter("from");
+        String targetCurrency = request.getParameter("to");
         String amount = request.getParameter("amount");
 
-//        control.getExchangeTransaction(from, to, amount, response);
-
-        if (from.equals(empty) || from.length() != CORRECT_LETTER_COUNT_CURRENT_NAME ||
-                from.matches("\\d+") || !(from.matches("[a-zA-Z]+"))) {
+        if (baseCurrency.equals(empty) || baseCurrency.length() != CORRECT_COUNT_LETTER_CURRENCY_NAME ||
+                baseCurrency.matches("\\d+") || !(baseCurrency.matches("[a-zA-Z]+"))) {
             response.setStatus(400);
-            errorQuery = new ErrorQuery("Base currency code " + from + " is empty or incorrect - 400");
+            errorQuery = new ErrorQuery("Base currency code " + baseCurrency + " is empty or incorrect - 400");
             getJsonResponse(errorQuery, response);
-        } else if (to.equals(empty) || to.length() != CORRECT_LETTER_COUNT_CURRENT_NAME ||
-                to.matches("\\d+") || !(to.matches("[a-zA-Z]+"))) {
+        } else if (targetCurrency.equals(empty) || targetCurrency.length() != CORRECT_COUNT_LETTER_CURRENCY_NAME ||
+                targetCurrency.matches("\\d+") || !(targetCurrency.matches("[a-zA-Z]+"))) {
             response.setStatus(400);
-            errorQuery = new ErrorQuery("Target currency code " + to + " is empty or incorrect - 400");
+            errorQuery = new ErrorQuery("Target currency code " + targetCurrency + " is empty or incorrect - 400");
             getJsonResponse(errorQuery, response);
         } else if (amount.equals(empty) || !(amount.matches("\\d*[.]?\\d{1,2}\\b"))) {
             response.setStatus(400);
@@ -44,7 +42,7 @@ public class ExchangeCurrenciesServlet extends HttpServlet {
             getJsonResponse(errorQuery, response);
         } else {
 
-            control.getExchangeTransaction(from, to, amount, response);
+            queriesControl.getExchangeTransaction(baseCurrency, targetCurrency, amount, response);
 
         }
     }

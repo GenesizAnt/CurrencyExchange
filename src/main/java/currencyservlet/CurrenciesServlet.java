@@ -1,27 +1,26 @@
-package com.example.currencyservlet;
+package currencyservlet;
 
-import com.example.currencyexchange.ControlQuery;
-import com.example.currencyexchange.CurrencyDAO;
-import com.example.currencyexchange.ErrorQuery;
+import com.example.controller.QueriesControl;
+import com.example.entity.ErrorQuery;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-import static com.example.Util.CORRECT_LETTER_COUNT_CURRENT_NAME;
+import static com.example.Util.CORRECT_COUNT_LETTER_CURRENCY_NAME;
 import static com.example.Util.getJsonResponse;
 
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
 
-    private ControlQuery control = new ControlQuery();
+    private QueriesControl queriesControl = new QueriesControl();
     private ErrorQuery errorQuery;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        control.getAllCurrency(response);
+        queriesControl.getAllCurrency(response);
 
     }
 
@@ -34,7 +33,7 @@ public class CurrenciesServlet extends HttpServlet {
         String nameCurrency = request.getParameter("name");
         String signCurrency = request.getParameter("sign");
 
-        if (codeCurrency.equals(empty) || codeCurrency.length() != CORRECT_LETTER_COUNT_CURRENT_NAME ||
+        if (codeCurrency.equals(empty) || codeCurrency.length() != CORRECT_COUNT_LETTER_CURRENCY_NAME ||
                 codeCurrency.matches("\\d+") || !(codeCurrency.matches("[a-zA-Z]+"))) {
             response.setStatus(400);
             errorQuery = new ErrorQuery("Code currency " + codeCurrency + " is empty or incorrect - 400");
@@ -49,7 +48,7 @@ public class CurrenciesServlet extends HttpServlet {
             getJsonResponse(errorQuery, response);
         } else {
 
-            control.postCurrency(codeCurrency, nameCurrency, signCurrency, response);
+            queriesControl.postCurrency(codeCurrency, nameCurrency, signCurrency, response);
 
         }
     }

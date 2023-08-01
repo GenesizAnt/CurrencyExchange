@@ -1,16 +1,30 @@
-package com.example.currencyexchange;
+package com.example.entity;
 
-public abstract class PairCurrency {
+public class ExchangeRate {
 
     private int id;
-
     private Currency baseCurrency;
-
     private Currency targetCurrency;
-
     private double rate;
 
+    public ExchangeRate(int id, Currency baseCurrency, Currency targetCurrency, double rate) {
+        this.id = id;
+        this.baseCurrency = baseCurrency;
+        this.targetCurrency = targetCurrency;
+        this.rate = rate;
+    }
 
+    public ExchangeRate() {
+
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public Currency getBaseCurrency() {
         return baseCurrency;

@@ -2,12 +2,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSP - Hello World</title>
+    <title>Hello</title>
 </head>
 <body>
-<h1><%= "Hello World!" %>
+<h1><%= "Проект “Обмен валют”" %>
 </h1>
 <br/>
-<a href="hello-servlet">Hello Servlet</a>
+<p>REST API для описания валют и обменных курсов.<br />
+    Позволяет просматривать и редактировать списки валют и обменных курсов,<br />
+    и совершать расчёт конвертации произвольных сумм из одной валюты в другую.<br />
+    <br />
+    Веб-интерфейс для проекта не подразумевается.</p>
+<%--<a href="hello-servlet">Hello Servlet</a>--%>
 </body>
 </html>

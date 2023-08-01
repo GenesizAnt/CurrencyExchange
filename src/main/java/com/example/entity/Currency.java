@@ -1,7 +1,4 @@
-package com.example.currencyexchange;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+package com.example.entity;
 
 public class Currency {
 
@@ -20,21 +17,6 @@ public class Currency {
     public Currency() {
 
     }
-
-
-//    public String getJSONCurrency() throws JsonProcessingException {
-//        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
-//    }
-
-//    @Override
-//    public String toString() {
-//        return "   {\n" +
-//                "          \"id\": " + id + ",\n" +
-//                "          \"code\": \"" + code + '\"' + ",\n" +
-//                "          \"fullName\": \"" + fullName + '\"' + ",\n" +
-//                "          \"sign\": \"" + sign + '\"' + "\n" +
-//                "   }";
-//    }
 
     public int getId() {
         return id;

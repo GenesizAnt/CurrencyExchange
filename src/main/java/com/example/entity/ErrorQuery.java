@@ -1,4 +1,4 @@
-package com.example.currencyexchange;
+package com.example.entity;
 
 public class ErrorQuery {
 
@@ -10,9 +10,5 @@ public class ErrorQuery {
 
     public String getErrorMessage() {
         return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
     }
 }

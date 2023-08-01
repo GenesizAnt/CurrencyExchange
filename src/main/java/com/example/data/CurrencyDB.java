@@ -1,4 +1,4 @@
-package com.example.currencyexchange;
+package com.example.data;
 
 import java.sql.*;
 
@@ -6,7 +6,7 @@ public class CurrencyDB {
 
     private Connection connection;
     private Statement statement;
-    private PreparedStatement preparedStatement;
+//    private PreparedStatement preparedStatement;
 
     public CurrencyDB() {
         try {
@@ -56,9 +56,9 @@ public class CurrencyDB {
         return statement;
     }
 
-    public PreparedStatement getPreparedStatement() {
-        return preparedStatement;
-    }
+//    public PreparedStatement getPreparedStatement() {
+//        return preparedStatement;
+//    }
 
 }
 

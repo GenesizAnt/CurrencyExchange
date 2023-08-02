@@ -4,12 +4,10 @@ import com.example.entity.Currency;
 import com.example.entity.ErrorQuery;
 import com.example.entity.ExchangeRate;
 import com.example.entity.ExchangeTransaction;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.data.CurrencyDAO;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import static com.example.Util.getCurrenciesForExchange;
@@ -17,12 +15,10 @@ import static com.example.Util.getJsonResponse;
 
 public class QueriesControl {
 
-    private ObjectMapper objectMapper;
     private CurrencyDAO currencyDAO;
     private ErrorQuery errorQuery;
 
     public QueriesControl() {
-        this.objectMapper = new ObjectMapper();
         this.currencyDAO = new CurrencyDAO();
     }
 
@@ -188,16 +184,22 @@ public class QueriesControl {
             response.setStatus(409);
             errorQuery = new ErrorQuery("Currency with this code already exists - 409");
             getJsonResponse(errorQuery, response);
+        } else if (baseCurrency == null) {
+            response.setStatus(404);
+            errorQuery = new ErrorQuery("Currency with " + baseCurrencyCode + " code does not exist - 404");
+            getJsonResponse(errorQuery, response);
+        } else if (targetCurrency == null) {
+            response.setStatus(404);
+            errorQuery = new ErrorQuery("Currency with " + targetCurrencyCode + " code does not exist - 404");
+            getJsonResponse(errorQuery, response);
         } else {
-            //Todo остановился рефакторинге тут
+
             currencyDAO.insertExchangeRate(baseCurrency, targetCurrency, rate);
+
             try {
                 exchangeRate = currencyDAO.getExchangeRateByCode(baseCurrencyCode, targetCurrencyCode);
                 response.setStatus(200);
                 getJsonResponse(exchangeRate, response);
-//                String jsonExchangeRate = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(exchangeRate);
-//                PrintWriter writer = response.getWriter();
-//                writer.println(jsonExchangeRate);
             } catch (IOException e) {
                 response.setStatus(500);
                 errorQuery = new ErrorQuery("Database is unavailable - 500");
@@ -209,22 +211,22 @@ public class QueriesControl {
 
     public void patchExchangeRate(String exchangeRateCode, String rate, HttpServletResponse response) throws IOException {
 
-        String[] exchangeRatePair = getCurrenciesForExchange(exchangeRateCode);//Todo добавить проверку на нулл and another
+        String[] currenciesForExchange = getCurrenciesForExchange(exchangeRateCode);
+        ExchangeRate exchangeRate = currencyDAO.getExchangeRateByCode(currenciesForExchange[0], currenciesForExchange[1]);
 
-        Currency baseCurrency = currencyDAO.getCurrencyByCode(exchangeRatePair[0]);
-        Currency targetCurrency = currencyDAO.getCurrencyByCode(exchangeRatePair[1]);
-
-        ExchangeRate exchangeRate = currencyDAO.getExchangeRateByCode(exchangeRatePair[0], exchangeRatePair[1]);
+        Currency baseCurrency = currencyDAO.getCurrencyByCode(currenciesForExchange[0]);
+        Currency targetCurrency = currencyDAO.getCurrencyByCode(currenciesForExchange[1]);
 
         if (exchangeRate == null) {
-            response.setStatus(409);
-            errorQuery = new ErrorQuery("Exchange transaction rate not found - 404");
+            response.setStatus(404);
+            errorQuery = new ErrorQuery("Exchange rate not found - 404");
             getJsonResponse(errorQuery, response);
         } else {
+
             currencyDAO.patchExchangeRate(baseCurrency, targetCurrency, rate);
 
             try {
-                exchangeRate = currencyDAO.getExchangeRateByCode(exchangeRatePair[0], exchangeRatePair[1]);
+                exchangeRate = currencyDAO.getExchangeRateByCode(currenciesForExchange[0], currenciesForExchange[1]);
                 response.setStatus(200);
                 getJsonResponse(exchangeRate, response);
             } catch (IOException e) {
@@ -238,5 +240,3 @@ public class QueriesControl {
 
     }
 }
-
-//Todo добавить везде проверку корректности ввода валют и прочее. Например добавить класс ЧекВалидЗапрос или в класс Ютил

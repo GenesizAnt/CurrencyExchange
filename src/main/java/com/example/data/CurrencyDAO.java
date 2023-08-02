@@ -101,7 +101,7 @@ public class CurrencyDAO {
 
     public ExchangeRate getExchangeRateByCode(String baseCurrencyCode, String targetCurrencyCode) {
 
-        String getExchangeRateByCode = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
+        String getExchangeRateByCodeCommand = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
                 "FROM exchangeRates\n" +
                 "INNER JOIN currencies base ON exchangeRates.BaseCurrencyId = base.ID\n" +
                 "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n" +
@@ -109,7 +109,7 @@ public class CurrencyDAO {
 
         currencyDB.connect();
         try {
-            ResultSet resultSet = currencyDB.getStatement().executeQuery(getExchangeRateByCode);
+            ResultSet resultSet = currencyDB.getStatement().executeQuery(getExchangeRateByCodeCommand);
             if (!resultSet.next()) {
                 resultSet.close();
                 currencyDB.disconnect();
@@ -131,7 +131,7 @@ public class CurrencyDAO {
 
     public ArrayList<ExchangeRate> getExchangeThroughTransaction(String baseCurrency, String targetCurrency) {
 
-        String getByExchangeRate = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
+        String getByExchangeRateCommand = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
                 "FROM exchangeRates\n" +
                 "INNER JOIN currencies base ON exchangeRates.BaseCurrencyId = base.ID\n" +
                 "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n" +
@@ -139,7 +139,7 @@ public class CurrencyDAO {
 
         try {
             currencyDB.connect();
-            ResultSet resultSet = currencyDB.getStatement().executeQuery(getByExchangeRate);
+            ResultSet resultSet = currencyDB.getStatement().executeQuery(getByExchangeRateCommand);
             ArrayList<ExchangeRate> exchangeRatesForTransaction = new ArrayList<>();
             if (!resultSet.next()) {
                 resultSet.close();
@@ -181,13 +181,13 @@ public class CurrencyDAO {
 
     public void patchExchangeRate(Currency baseCurrency, Currency targetCurrency, String rateExchange) {
 
-        String getByCode = "UPDATE exchangeRates SET rate='" + Double.parseDouble(rateExchange) +
+        String getByCodeCommand = "UPDATE exchangeRates SET rate='" + Double.parseDouble(rateExchange) +
                 "' WHERE BaseCurrencyId='" + baseCurrency.getId() +
                 "' AND TargetCurrencyId='" + targetCurrency.getId() + "'";
 
         currencyDB.connect();
         try {
-            currencyDB.getStatement().executeUpdate(getByCode);
+            currencyDB.getStatement().executeUpdate(getByCodeCommand);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

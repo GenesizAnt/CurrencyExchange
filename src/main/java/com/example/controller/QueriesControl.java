@@ -6,7 +6,7 @@ import com.example.entity.ExchangeRate;
 import com.example.entity.ExchangeTransaction;
 import com.example.data.CurrencyDAO;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.ArrayList;
 

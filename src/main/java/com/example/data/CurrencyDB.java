@@ -33,7 +33,8 @@ public class CurrencyDB {
 
     public void connect() {
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:/opt/tomcat/webapps/Currencies.db");
+//            connection = DriverManager.getConnection("jdbc:sqlite:/opt/tomcat/webapps/Currencies.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\genes\\IdeaProjects\\1NewVolna\\CurrencyExchange\\Currencies.db");
             this.statement = connection.createStatement();
         } catch (SQLException e) {
             throw new RuntimeException(e);

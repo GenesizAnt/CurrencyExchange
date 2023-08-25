@@ -1,10 +1,8 @@
 package com.example.currencyservlet;
 
 import com.example.controller.QueriesControl;
-import com.example.entity.ErrorQuery;
+import com.example.data.ErrorQuery;
 
-import javax.servlet.*;
-import jakarta.servlet.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -38,6 +36,10 @@ public class CurrenciesServlet extends HttpServlet {
         String nameCurrency = request.getParameter("name");
         String signCurrency = request.getParameter("sign");
 
+        //ToDo создать ДТО и оправлять его на отдельную валидацию
+        //ToDo ModelMapper что это для ДТО? Если нужно будет превращать одну дто в другую похожую, почитай про ModelMapper
+        //ToDo Optional что это и как заменить НУЛЛ?
+
         if (codeCurrency.equals(empty) || codeCurrency.length() != CORRECT_COUNT_LETTER_CURRENCY_NAME ||
                 codeCurrency.matches("\\d+") || !(codeCurrency.matches("[a-zA-Z]+"))) {
             response.setStatus(400);
@@ -57,5 +59,4 @@ public class CurrenciesServlet extends HttpServlet {
 
         }
     }
-
 }

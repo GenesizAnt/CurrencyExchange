@@ -11,14 +11,8 @@ target/
 *.iws
 *.iml
 *.ipr
-.mtj.tmp/
-*.class
-*.jar
-*.war
-*.ear
-*.nar
-hs_err_pid*
-replay_pid*
+/apache-tomcat-10.1.11
+/apache-tomcat-8.5.89
 
 ### Eclipse ###
 .apt_generated

@@ -1,9 +1,9 @@
 package com.example.controller;
 
 import com.example.entity.Currency;
-import com.example.entity.ErrorQuery;
+import com.example.data.ErrorQuery;
 import com.example.entity.ExchangeRate;
-import com.example.entity.ExchangeTransaction;
+import com.example.data.ExchangeTransaction;
 import com.example.data.CurrencyDAO;
 
 import jakarta.servlet.http.*;
@@ -151,6 +151,10 @@ public class QueriesControl {
     public void postCurrency(String codeCurrency, String nameCurrency, String signCurrency, HttpServletResponse response) throws IOException {
 
         Currency currencyByCode = currencyDAO.getCurrencyByCode(codeCurrency);
+        //ToDo Перед вставкой валюты в базу ты вручную проверяешь её существование, лучше положиться на UNIQUE индекс для колонки с кодом валюты
+        //ToDo В гит репозитории не следует класть папки с Tomcat
+        //ToDo https://www.baeldung.com/java-dto-pattern
+        //ToDo Java. Для чего нужен Optional?
 
         if (!(currencyByCode == null)) {
             response.setStatus(409);

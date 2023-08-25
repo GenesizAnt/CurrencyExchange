@@ -11,6 +11,8 @@ public class CurrencyDAO {
 
     private CurrencyDB currencyDB;
 
+    //ToDo пользоваться connection pool вместо того, чтобы на каждую операцию создавать по свежему соединению
+
     public CurrencyDAO() {
         this.currencyDB = new CurrencyDB();
     }

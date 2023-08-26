@@ -1,6 +1,6 @@
 package com.example.data;
 
-public class ErrorQuery {
+public class ErrorQuery extends RuntimeException {
 
     private String errorMessage;
 

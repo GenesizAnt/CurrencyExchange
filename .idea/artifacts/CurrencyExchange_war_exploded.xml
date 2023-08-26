@@ -14,7 +14,7 @@
           <element id="module-output" name="CurrencyExchange" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="Maven: org.xerial:sqlite-jdbc:3.40.1.0" />
+          <element id="library" level="project" name="Maven: org.xerial:sqlite-jdbc:3.42.0.0" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.15.2" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.15.2" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.15.2" />

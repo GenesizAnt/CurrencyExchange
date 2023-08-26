@@ -2,20 +2,60 @@ package com.example.data;
 
 import com.example.entity.Currency;
 import com.example.entity.ExchangeRate;
+import com.example.test.ConnectionPool;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static org.sqlite.core.Codes.SQLITE_CONSTRAINT;
+
 public class CurrencyDAO {
 
     private CurrencyDB currencyDB;
+    private ConnectionPool connectionPool;
+
+    public void setConnectionPool(ConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
+    }
+
+    public Connection getConnectionPool() throws SQLException {
+        return connectionPool.getConnection();
+    }
 
     //ToDo пользоваться connection pool вместо того, чтобы на каждую операцию создавать по свежему соединению
+    //ToDo почему RuntimeException не нужно передавать в сигнатуру, а если наследоваться от Throwable надо
+    //ToDo SQLITE_CONSTRAINT == ex.getErrorCode() почитать про коды ошибок
 
     public CurrencyDAO() {
         this.currencyDB = new CurrencyDB();
     }
+
+//    public void insertCurrency(String codeCurrency, String nameCurrency, String signCurrency) {
+//        String insertCurrencyCommand = "INSERT INTO currencies (code, fullName, sign) VALUES (?, ?, ?)";
+//
+//        try(Connection connection = getConnectionPool();
+//            PreparedStatement statement = connection.prepareStatement(insertCurrencyCommand)) {
+//
+//            statement.setInt();
+//
+//        } catch (SQLException ex) {
+//            if(SQLITE_CONSTRAINT == ex.getErrorCode())
+//                throw new ErrorQuery("ВАЛЮТА С ТАКИМ КОДОМ УЖЕ СУЩЕСТВУЕТ");
+//            throw new RuntimeException(ex);
+//        }
+//
+//
+//        currencyDB.connect();
+//        try {
+//            currencyDB.getStatement().executeUpdate(insertCurrencyCommand);
+//            currencyDB.disconnect();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     public void insertCurrency(String codeCurrency, String nameCurrency, String signCurrency) {
         String insertCurrencyCommand = "INSERT INTO currencies (code, fullName, sign) VALUES ('" + codeCurrency + "', '" + nameCurrency + "', '" + signCurrency + "')";

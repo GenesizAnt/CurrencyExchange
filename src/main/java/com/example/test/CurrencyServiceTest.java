@@ -1,22 +1,22 @@
 package com.example.test;
 
+import com.example.dto.CurrencyDTO;
 import com.example.entity.Currency;
 
 import java.sql.SQLException;
-import java.util.Optional;
 
-public class CurrencyService {
+public class CurrencyServiceTest {
 
-    private final CurrencyDAOtest currencyDAOtest;
+    private final CurrencyDAO currencyDAO;
     private final CurrencyMapper currencyMapper;
 
-    public CurrencyService() throws SQLException {
-        this.currencyDAOtest = new CurrencyDAOtest();
+    public CurrencyServiceTest() throws SQLException {
+        this.currencyDAO = new CurrencyDAO();
         this.currencyMapper = new CurrencyMapper();
     }
 
     public CurrencyDTO findByCode(String code) {
-        Currency currency = currencyDAOtest.getCurrencyByCode(code);
+        Currency currency = currencyDAO.getCurrencyByCode(code);
         if (currency != null) {
             CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
             return currencyDTO;

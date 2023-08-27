@@ -7,9 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-public class CurrencyDAOtest {
+public class CurrencyDAO {
 
 
     private ConnectionPool connectionPool;
@@ -26,7 +27,7 @@ public class CurrencyDAOtest {
         }
     }
 
-    public CurrencyDAOtest() {
+    public CurrencyDAO() {
         try {
             this.connectionPool = CurrencyBDConnectionPool.create();
         } catch (SQLException e) {
@@ -61,16 +62,16 @@ public class CurrencyDAOtest {
         return null; //должен возвращать это Optional.empty();
     }
 
-    public ArrayList<Currency> getAllCurrency() {
+    public Optional<List<Currency>> getAllCurrency() {      //метод готов по новым правилам
         String getAllCurrencyCommand = "SELECT * FROM currencies";
 
         try (Connection connection = getConnectionPool();
              PreparedStatement statement = connection.prepareStatement(getAllCurrencyCommand)) {
 
-            ArrayList<Currency> currencyList = new ArrayList<>();
             statement.execute();
             ResultSet resultSet = statement.getResultSet();
             if (resultSet.isBeforeFirst()) {
+                ArrayList<Currency> currencyList = new ArrayList<>();
                 while (resultSet.next()) {
                     currencyList.add(new Currency(
                             resultSet.getInt("id"),
@@ -78,8 +79,10 @@ public class CurrencyDAOtest {
                             resultSet.getString("fullName"),
                             resultSet.getString("sign")));
                 }
+                return Optional.of(currencyList);
+            } else {
+                return Optional.empty();
             }
-            return currencyList; //должен возвращать это Optional.empty();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

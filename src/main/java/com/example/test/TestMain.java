@@ -1,9 +1,7 @@
 package com.example.test;
 
-import com.example.data.ExchangeRateDAO;
 import com.example.entity.Currency;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 
 public class TestMain {
@@ -29,8 +27,8 @@ public class TestMain {
 //        currencyDTO.getName();
 
 
-        CurrencyDAOtest currencyDAOtest = new CurrencyDAOtest();
-        Currency usd = currencyDAOtest.getCurrencyByCode("USD");
+        CurrencyDAO currencyDAO = new CurrencyDAO();
+        Currency usd = currencyDAO.getCurrencyByCode("USD");
         usd.getFullName();
 
     }

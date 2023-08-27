@@ -5,14 +5,11 @@ import com.example.entity.ExchangeRate;
 import com.example.test.ConnectionPool;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static org.sqlite.core.Codes.SQLITE_CONSTRAINT;
-
-public class CurrencyDAO {
+public class CurrencyDAObefore {
 
     private CurrencyDB currencyDB;
     private ConnectionPool connectionPool;
@@ -29,7 +26,7 @@ public class CurrencyDAO {
     //ToDo почему RuntimeException не нужно передавать в сигнатуру, а если наследоваться от Throwable надо
     //ToDo SQLITE_CONSTRAINT == ex.getErrorCode() почитать про коды ошибок
 
-    public CurrencyDAO() {
+    public CurrencyDAObefore() {
         this.currencyDB = new CurrencyDB();
     }
 

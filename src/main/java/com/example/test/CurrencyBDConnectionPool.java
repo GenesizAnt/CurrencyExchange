@@ -27,6 +27,11 @@ public class CurrencyBDConnectionPool implements ConnectionPool {
     }
 
     private static Connection createConnection(String url) throws SQLException {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         return DriverManager.getConnection(url);
     }
 

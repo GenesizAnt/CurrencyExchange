@@ -8,15 +8,38 @@ import java.util.ArrayList;
 
 public class TestMain {
     public static void main(String[] args) throws SQLException {
-        ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAO();
-        ConnectionPool connectionPool = CurrencyBDConnectionPool.create();
-        exchangeRateDAO.setConnectionPool(connectionPool);
-        try {
-            ArrayList<Currency> exchangeRateByCode = exchangeRateDAO.getExchangeRateByCode("USD", "RUB");
-            System.out.println(exchangeRateByCode.get(0));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+//        ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAO();
+//        ConnectionPool connectionPool = CurrencyBDConnectionPool.create();
+//        exchangeRateDAO.setConnectionPool(connectionPool);
+//        try {
+//            ArrayList<Currency> exchangeRateByCode = exchangeRateDAO.getExchangeRateByCode("USD", "RUB");
+//            System.out.println(exchangeRateByCode.get(0));
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+
+//        Currency currency = new Currency(0, "USD", "Dollar", "$");
+//        CurrencyMapper currencyMapper = new CurrencyMapper();
+//        CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
+//        currencyDTO.getName();
+
+//        CurrencyService service = new CurrencyService();
+//        String code = "USD";
+//        CurrencyDTO currencyDTO = service.findByCode(code);
+//        currencyDTO.getName();
+
+
+        CurrencyDAOtest currencyDAOtest = new CurrencyDAOtest();
+        Currency usd = currencyDAOtest.getCurrencyByCode("USD");
+        usd.getFullName();
+
+    }
+}
+
+
+
+
+
 
 //        ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAO();
 //        init();
@@ -27,9 +50,3 @@ public class TestMain {
 //        } catch (SQLException e) {
 //            throw new RuntimeException(e);
 //        }
-
-
-    }
-
-
-}

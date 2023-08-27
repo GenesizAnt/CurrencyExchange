@@ -2,6 +2,8 @@ package com.example.entity;
 
 public class ExchangeRate {
 
+    //ToDo проверить написание наименований по ТЗ
+
     private int id;
     private Currency baseCurrency;
     private Currency targetCurrency;

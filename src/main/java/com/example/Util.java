@@ -1,10 +1,13 @@
 package com.example;
 
+import com.example.entity.Currency;
+import com.example.error.ValidationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Optional;
 
 public class Util {
 
@@ -14,12 +17,18 @@ public class Util {
 
     static ObjectMapper objectMapper = new ObjectMapper();
 
-    public static String getCodeFromURL(HttpServletRequest request) {
+    public static String getCodeFromURL(HttpServletRequest request) throws ValidationException {
         String[] splitURL = getSplitURL(request);
-        return splitURL[splitURL.length - 1].toUpperCase();
+        String code = splitURL[splitURL.length - 1].toUpperCase();
+        if (code.length() > CORRECT_COUNT_LETTER_CURRENCY_NAME) {
+            throw new ValidationException();
+        } else {
+            return code;
+        }
     }
 
     public static void getJsonResponse(Object obj, HttpServletResponse response) throws IOException {
+//        Optional<Currency> objectOptional = obj;
         String jsonResponse = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
         PrintWriter writer = response.getWriter();
         writer.println(jsonResponse);
@@ -29,9 +38,13 @@ public class Util {
         return new String[]{CodeCurrenciesForExchange.substring(0, 3), CodeCurrenciesForExchange.substring(3, 6)};
     }
 
-    public static boolean isCorrectCodeCurrency(HttpServletRequest request) {
+    public static boolean isCorrectCodeCurrency(HttpServletRequest request) throws ValidationException {
         String[] splitURL = getSplitURL(request);
-        return isCorrectCode(splitURL, CORRECT_COUNT_LETTER_CURRENCY_NAME);
+        if (isCorrectCode(splitURL, CORRECT_COUNT_LETTER_CURRENCY_NAME)) {
+            return true;
+        } else {
+            throw new ValidationException();
+        }
     }
 
     public static boolean isCorrectCodeExchangeRate(HttpServletRequest request) {

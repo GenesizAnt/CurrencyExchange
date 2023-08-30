@@ -26,10 +26,10 @@ public class TestMain {
 //        CurrencyDTO currencyDTO = service.findByCode(code);
 //        currencyDTO.getName();
 
-
-        CurrencyDAO currencyDAO = new CurrencyDAO();
-        Currency usd = currencyDAO.getCurrencyByCode("USD");
-        usd.getFullName();
+//
+//        CurrencyDAO currencyDAO = new CurrencyDAO();
+//        Currency usd = currencyDAO.getCurrencyByCode("USD");
+//        usd.getFullName();
 
     }
 }

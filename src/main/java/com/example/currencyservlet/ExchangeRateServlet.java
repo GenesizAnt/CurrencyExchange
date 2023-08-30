@@ -1,7 +1,7 @@
 //package com.example.currencyservlet;
 //
 //import com.example.controller.QueriesControl;
-//import com.example.data.ErrorQuery;
+//import com.example.error.ErrorQuery;
 //
 //import jakarta.servlet.ServletException;
 //import jakarta.servlet.annotation.WebServlet;

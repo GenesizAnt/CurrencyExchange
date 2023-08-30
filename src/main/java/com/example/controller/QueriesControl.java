@@ -1,7 +1,7 @@
 //package com.example.controller;
 //
 //import com.example.entity.Currency;
-//import com.example.data.ErrorQuery;
+//import com.example.error.ErrorQuery;
 //import com.example.entity.ExchangeRate;
 //import com.example.data.ExchangeTransaction;
 //import com.example.data.CurrencyDAObefore;

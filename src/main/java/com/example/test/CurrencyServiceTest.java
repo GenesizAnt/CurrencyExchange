@@ -4,6 +4,7 @@ import com.example.dto.CurrencyDTO;
 import com.example.entity.Currency;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class CurrencyServiceTest {
 
@@ -16,7 +17,7 @@ public class CurrencyServiceTest {
     }
 
     public CurrencyDTO findByCode(String code) {
-        Currency currency = currencyDAO.getCurrencyByCode(code);
+        Optional<Currency> currency = currencyDAO.getCurrencyByCode(code);
         if (currency != null) {
             CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
             return currencyDTO;

@@ -35,7 +35,7 @@ public class CurrencyDAO {
         }
     }
 
-    public Currency getCurrencyByCode(String codeCurrency) {
+    public Optional<Currency> getCurrencyByCode(String codeCurrency) { //метод готов по новым правилам
         String getByCodeCommand = "SELECT * FROM currencies WHERE code = ?";
 
         try (Connection connection = getConnectionPool();
@@ -47,19 +47,20 @@ public class CurrencyDAO {
             ResultSet resultSet = statement.getResultSet();
             if (resultSet.isBeforeFirst()) {
                 if (resultSet.next()) {
-                    return new Currency(
+                     Currency currency = new Currency(
                             resultSet.getInt("id"),
                             resultSet.getString("code"),
                             resultSet.getString("fullName"),
                             resultSet.getString("sign"));
+                    return Optional.of(currency);
                 } else {
-                    return null; //должен возвращать это Optional.empty();
+                    return Optional.empty();
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null; //должен возвращать это Optional.empty();
+        return Optional.empty();
     }
 
     public Optional<List<Currency>> getAllCurrency() {      //метод готов по новым правилам

@@ -1,6 +1,6 @@
 //package com.example.zdelete;
 //
-//import com.example.data.ErrorQuery;
+//import com.example.error.ErrorQuery;
 //import com.example.entity.Currency;
 //import com.example.test.CurrencyDAO;
 //import jakarta.servlet.http.HttpServletResponse;

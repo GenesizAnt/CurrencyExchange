@@ -1,38 +1,75 @@
 package com.example.controller;
 
-import com.example.data.ErrorQuery;
+import com.example.error.CurrencyNotFoundException;
+import com.example.error.ErrorQuery;
 import com.example.dto.CurrencyDTO;
+import com.example.error.ValidationException;
 import com.example.servise.CurrencyService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.Util.getJsonResponse;
+import static com.example.Util.*;
+import static com.example.zdelete.JsonCreator.getValue;
 
 public class RequestValidation extends HttpServlet {
 
-        //ToDo Перед вставкой валюты в базу ты вручную проверяешь её существование, лучше положиться на UNIQUE индекс для колонки с кодом валюты
-        //ToDo В гит репозитории не следует класть папки с Tomcat
-        //ToDo Java. Для чего нужен Optional?
+    //ToDo Перед вставкой валюты в базу ты вручную проверяешь её существование, лучше положиться на UNIQUE индекс для колонки с кодом валюты
+    //ToDo В гит репозитории не следует класть папки с Tomcat
+    //ToDo Java. Для чего нужен Optional?
 
-//    CurrencyDAO currencyDAO = new CurrencyDAO();
-    CurrencyService currencyService = new CurrencyService();
+    //    CurrencyDAO currencyDAO = new CurrencyDAO();
+    private CurrencyService currencyService = new CurrencyService();
     private ErrorQuery errorQuery;
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private PrintWriter writer;
 
 
-//    public void getCurrency(String codeCurrency, HttpServletResponse response) throws IOException {
-//
+    public void getCurrency(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        try {
+
+            isCorrectCodeCurrency(request);
+            String currencyCode = getCodeFromURL(request);
+
+            try {
+                Optional<CurrencyDTO> currencyDTO = currencyService.getCurrencyByCode(currencyCode);
+                response.setStatus(200);
+                writer = response.getWriter();
+                writer.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(currencyDTO.get()));
+            } catch (CurrencyNotFoundException e) {
+//                response.setStatus(404);
+//                getJsonResponse(new CurrencyNotFoundException("Currency not found - 404"), response);
+                writer = response.getWriter();
+                writer.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(new CurrencyNotFoundException("Currency not found - 404")));
+//                e.sendError(404, "Currency not found - 404", response);
+            } catch (RuntimeException r) {
+
+//                r.getMessage();
+//                response.setStatus(500);
+//                errorQuery = new ErrorQuery(r.getMessage());
+                errorQuery = new ErrorQuery(500, "Database is unavailable - 500", response);
+//                getJsonResponse(errorQuery, response);
+            }
+        } catch (ValidationException e) {
+            e.sendError(400, "No currency code in the address - 400", response);
+        }
+
+
 //        if (codeCurrency.isEmpty()) {
 //            response.setStatus(400);
 //            errorQuery = new ErrorQuery("No currency code in the address - 400");
 //            getJsonResponse(errorQuery, response);
 //        } else {
 //            try {
-//                Currency currencyByCode = currencyDAO.getCurrencyByCode(codeCurrency);
-//                if (!(currencyByCode == null)) {
+//                Optional<CurrencyDTO> currencyByCode = currencyService.getCurrencyByCode(codeCurrency);
+//                if (currencyByCode.isPresent()) {
 //                    response.setStatus(200);
 //                    getJsonResponse(currencyByCode, response);
 //                } else {
@@ -47,26 +84,48 @@ public class RequestValidation extends HttpServlet {
 //                throw new RuntimeException(e);
 //            }
 //        }
-//    }
+//        return Optional.empty();
 
-    public void getAllCurrency(HttpServletResponse response) throws IOException {
+
+//        catch (ValidationException e) {
+//            e.sendError(400, "No currency code in the address - 400");
+//        }
+
+
+//
+//        if (isCorrectCodeCurrency(request)) {
+//            String currencyCode = getCodeFromURL(request);
+////            queriesControl.getCurrency(currencyCode, response);
+//        } else {
+//            response.setStatus(400);
+//            errorQuery = new ErrorQuery("Incorrect request - 400");
+//            getJsonResponse(errorQuery, response);
+//        }
+
+
+    }
+
+    public void getAllCurrency(HttpServletResponse response) throws IOException { //метод готов по новым правилам
         Optional<List<CurrencyDTO>> allCurrency;
 
         try {
             allCurrency = currencyService.getAllCurrency();
+            if (allCurrency.isPresent()) {
+                for (CurrencyDTO currencyDTO : allCurrency.get()) {
+//                    getJsonResponse(currencyDTO, response);
+                }
+                response.setStatus(200);
+            } else {
+                //ToDo база курсов пуста
+            }
         } catch (Exception e) {
-            response.setStatus(500);
-            errorQuery = new ErrorQuery("Database is unavailable - 500");
-            getJsonResponse(errorQuery, response);
+//            response.setStatus(500);
+            errorQuery = new ErrorQuery(500, "Database is unavailable - 500", response);
+//            getJsonResponse(errorQuery, response);
             throw new RuntimeException(e);
         }
 
-        //ToDo проверка на пустой список if (currencyList.isPresent())
-        for (CurrencyDTO currencyDTO : allCurrency.get()) {
-            getJsonResponse(currencyDTO, response);
-        }
 
-        response.setStatus(200);
     }
 
 //    public void getAllExchangeRates(HttpServletResponse response) throws IOException {

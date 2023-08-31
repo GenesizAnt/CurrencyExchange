@@ -1,14 +1,12 @@
 package com.example;
 
-import com.example.entity.Currency;
 import com.example.error.ValidationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.Optional;
 
 public class Util {
 
@@ -19,10 +17,11 @@ public class Util {
     static ObjectMapper objectMapper = new ObjectMapper();
     private static PrintWriter writer;
 
-    public static void sendJsonError(HttpServletResponse response, int codeError, String msgError) throws IOException {
-        response.setStatus(codeError);
+    public static void getJsonResponse(HttpServletResponse response, int codeResponse, Object obj) throws IOException {
+        String jsonResponse = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
         writer = response.getWriter();
-        writer.println(msgError);
+        response.setStatus(codeResponse);
+        writer.println(jsonResponse);
     }
 
     public static String getCodeFromURL(HttpServletRequest request) throws ValidationException {
@@ -39,12 +38,12 @@ public class Util {
         }
     }
 
-    public static void getJsonResponse(Object obj, HttpServletResponse response) throws IOException {
-//        Optional<Currency> objectOptional = obj;
-        String jsonResponse = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
-        PrintWriter writer = response.getWriter();
-        writer.println(jsonResponse);
-    }
+//    public static void getJsonResponse(Object obj, HttpServletResponse response) throws IOException {
+////        Optional<Currency> objectOptional = obj;
+//        String jsonResponse = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+//        PrintWriter writer = response.getWriter();
+//        writer.println(jsonResponse);
+//    }
 
     public static String[] getCurrenciesForExchange(String CodeCurrenciesForExchange) {
         return new String[]{CodeCurrenciesForExchange.substring(0, 3), CodeCurrenciesForExchange.substring(3, 6)};

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.example.Util.*;
-import static com.example.zdelete.JsonCreator.getValue;
 
 public class RequestValidation extends HttpServlet {
 
@@ -33,96 +32,31 @@ public class RequestValidation extends HttpServlet {
 
 
     public void getCurrency(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         try {
-
             isCorrectCodeCurrency(request);
             String currencyCode = getCodeFromURL(request);
-
             try {
                 Optional<CurrencyDTO> currencyDTO = currencyService.getCurrencyByCode(currencyCode);
-                sendJsonError(response, 200, objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(currencyDTO.get()));
+                getJsonResponse(response, 200, currencyDTO.get());
             } catch (CurrencyNotFoundException e) {
-                writer = response.getWriter();
-                writer.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(e.getMessage()));
+                getJsonResponse(response, 404, e.getMessage());
             } catch (DatabaseException e) {
-                sendJsonError(response, 500,objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(e.getMessage()));
-//                r.getMessage();
-//                response.setStatus(500);
-//                errorQuery = new ErrorQuery(r.getMessage());
-//                errorQuery = new ErrorQuery(500, "Database is unavailable - 500", response);
-//                getJsonResponse(errorQuery, response);
+                getJsonResponse(response, 500, e.getMessage());
             }
         } catch (ValidationException e) {
-            sendJsonError(response, 400, objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(e.getMessage()));
-//            e.sendError(400, "No currency code in the address - 400", response);
+            getJsonResponse(response, 400, e.getMessage());
         }
-
-
-//        if (codeCurrency.isEmpty()) {
-//            response.setStatus(400);
-//            errorQuery = new ErrorQuery("No currency code in the address - 400");
-//            getJsonResponse(errorQuery, response);
-//        } else {
-//            try {
-//                Optional<CurrencyDTO> currencyByCode = currencyService.getCurrencyByCode(codeCurrency);
-//                if (currencyByCode.isPresent()) {
-//                    response.setStatus(200);
-//                    getJsonResponse(currencyByCode, response);
-//                } else {
-//                    response.setStatus(404);
-//                    errorQuery = new ErrorQuery("Currency not found - 404");
-//                    getJsonResponse(errorQuery, response);
-//                }
-//            } catch (IOException e) {
-//                response.setStatus(500);
-//                errorQuery = new ErrorQuery("Database is unavailable - 500");
-//                getJsonResponse(errorQuery, response);
-//                throw new RuntimeException(e);
-//            }
-//        }
-//        return Optional.empty();
-
-
-//        catch (ValidationException e) {
-//            e.sendError(400, "No currency code in the address - 400");
-//        }
-
-
-//
-//        if (isCorrectCodeCurrency(request)) {
-//            String currencyCode = getCodeFromURL(request);
-////            queriesControl.getCurrency(currencyCode, response);
-//        } else {
-//            response.setStatus(400);
-//            errorQuery = new ErrorQuery("Incorrect request - 400");
-//            getJsonResponse(errorQuery, response);
-//        }
-
-
     }
 
-    public void getAllCurrency(HttpServletResponse response) throws IOException { //метод готов по новым правилам
-        Optional<List<CurrencyDTO>> allCurrency;
-
+    public void getAllCurrency(HttpServletResponse response) throws IOException {
         try {
-            allCurrency = currencyService.getAllCurrency();
-            if (allCurrency.isPresent()) {
-                for (CurrencyDTO currencyDTO : allCurrency.get()) {
-//                    getJsonResponse(currencyDTO, response);
-                }
-                response.setStatus(200);
-            } else {
-                //ToDo база курсов пуста
-            }
-        } catch (Exception e) {
-//            response.setStatus(500);
-            errorQuery = new ErrorQuery(500, "Database is unavailable - 500", response);
-//            getJsonResponse(errorQuery, response);
-            throw new RuntimeException(e);
+            Optional<List<CurrencyDTO>> allCurrency = currencyService.getAllCurrency();
+            getJsonResponse(response, 200, allCurrency.get());
+        } catch (CurrencyNotFoundException e) {
+            getJsonResponse(response, 404, e.getMessage());
+        } catch (DatabaseException e) {
+            getJsonResponse(response, 500, e.getMessage());
         }
-
-
     }
 
 //    public void getAllExchangeRates(HttpServletResponse response) throws IOException {

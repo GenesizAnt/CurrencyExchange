@@ -36,9 +36,8 @@ public class CurrencyService {
 //        return null; // return Optional.empty();
 
 
-        Optional<Currency> currency;
         try {
-            currency = currencyDAO.getCurrencyByCode(code);
+            Optional<Currency> currency = currencyDAO.getCurrencyByCode(code);
             if (currency.isPresent()) {
                 CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
                 return Optional.ofNullable(currencyDTO);
@@ -78,12 +77,28 @@ public class CurrencyService {
 //        return Optional.empty();
 //    }
 
-    public Optional<List<CurrencyDTO>> getAllCurrency() { //ToDo изучить как работает этот код или придумать другой способ
-        Optional<List<Currency>> currencyList = currencyDAO.getAllCurrency();
-        if (currencyList.isPresent()) {
-            List<CurrencyDTO> currencyDTOList = currencyMapper.toDtoList(currencyList.get());
-            return Optional.of(currencyDTOList);
+    public Optional<List<CurrencyDTO>> getAllCurrency() throws CurrencyNotFoundException {
+//        Optional<List<Currency>> currencyList = currencyDAO.getAllCurrency();
+//        if (currencyList.isPresent()) {
+//            List<CurrencyDTO> currencyDTOList = currencyMapper.toDtoList(currencyList.get());
+//            return Optional.of(currencyDTOList);
+//        }
+//        return Optional.empty();
+
+
+        try {
+            Optional<List<Currency>> currencyList = currencyDAO.getAllCurrency();
+            if (currencyList.isPresent()) {
+                List<CurrencyDTO> currencyDTOList = currencyMapper.toDtoList(currencyList.get());
+                return Optional.of(currencyDTOList);
+            } else {
+//                return Optional.empty();
+                throw new CurrencyNotFoundException("Currency not found - 404");
+            }
+        } catch (CurrencyNotFoundException e) {
+            throw new CurrencyNotFoundException(e.getMessage());
+        } catch (Exception e) {
+            throw new DatabaseException("Database is unavailable - 500");
         }
-        return Optional.empty();
     }
 }

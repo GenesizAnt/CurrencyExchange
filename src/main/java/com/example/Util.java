@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Optional;
 
 public class Util {
@@ -16,14 +17,25 @@ public class Util {
     public static final int CORRECT_COUNT_LETTER_EXCHANGE_RATE_NAME = 6;
 
     static ObjectMapper objectMapper = new ObjectMapper();
+    private static PrintWriter writer;
+
+    public static void sendJsonError(HttpServletResponse response, int codeError, String msgError) throws IOException {
+        response.setStatus(codeError);
+        writer = response.getWriter();
+        writer.println(msgError);
+    }
 
     public static String getCodeFromURL(HttpServletRequest request) throws ValidationException {
         String[] splitURL = getSplitURL(request);
         String code = splitURL[splitURL.length - 1].toUpperCase();
-        if (code.length() > CORRECT_COUNT_LETTER_CURRENCY_NAME) {
-            throw new ValidationException();
-        } else {
-            return code;
+        try {
+            if (code.length() > CORRECT_COUNT_LETTER_CURRENCY_NAME) {
+                throw new ValidationException("No currency code in the address - 400");
+            } else {
+                return code;
+            }
+        } catch (ValidationException e) {
+            throw new ValidationException(e.getMessage());
         }
     }
 
@@ -40,10 +52,14 @@ public class Util {
 
     public static boolean isCorrectCodeCurrency(HttpServletRequest request) throws ValidationException {
         String[] splitURL = getSplitURL(request);
-        if (isCorrectCode(splitURL, CORRECT_COUNT_LETTER_CURRENCY_NAME)) {
-            return true;
-        } else {
-            throw new ValidationException();
+        try {
+            if (isCorrectCode(splitURL, CORRECT_COUNT_LETTER_CURRENCY_NAME)) {
+                return true;
+            } else {
+                throw new ValidationException("No currency code in the address - 400");
+            }
+        } catch (ValidationException e) {
+            throw new ValidationException(e.getMessage());
         }
     }
 

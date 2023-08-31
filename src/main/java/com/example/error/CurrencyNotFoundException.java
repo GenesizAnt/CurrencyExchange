@@ -7,16 +7,20 @@ public class CurrencyNotFoundException extends Exception {
     private String errorMessage;
 
     public CurrencyNotFoundException(String s) {
-        errorMessage = s;
+//        errorMessage = s;
+        super(s);
     }
 
     public CurrencyNotFoundException() {
 
     }
 
-    public void sendError(int codeError, String msgError, HttpServletResponse response) {
-        response.setStatus(codeError);
-        errorMessage = msgError;
-    }
+//    public void sendError(int codeError, String msgError, HttpServletResponse response) {
+//        response.setStatus(codeError);
+//        errorMessage = msgError;
+//    }
 
+//    public String getErrorMessage() {
+//        return errorMessage;
+//    }
 }

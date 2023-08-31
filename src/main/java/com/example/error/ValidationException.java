@@ -6,12 +6,17 @@ public class ValidationException extends Exception {
 
     private String errorMessage;
 
-    public void sendError(int codeError, String msgError, HttpServletResponse response) {
-        response.setStatus(codeError);
-        errorMessage = msgError;
+    public ValidationException(String s) {
+//        errorMessage = s;
+        super(s);
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
+//    public void sendError(int codeError, String msgError, HttpServletResponse response) {
+//        response.setStatus(codeError);
+//        errorMessage = msgError;
+//    }
+
+//    public String getErrorMessage() {
+//        return errorMessage;
+//    }
 }

@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.error.CurrencyNotFoundException;
+import com.example.error.DatabaseException;
 import com.example.error.ErrorQuery;
 import com.example.dto.CurrencyDTO;
 import com.example.error.ValidationException;
@@ -40,25 +41,21 @@ public class RequestValidation extends HttpServlet {
 
             try {
                 Optional<CurrencyDTO> currencyDTO = currencyService.getCurrencyByCode(currencyCode);
-                response.setStatus(200);
-                writer = response.getWriter();
-                writer.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(currencyDTO.get()));
+                sendJsonError(response, 200, objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(currencyDTO.get()));
             } catch (CurrencyNotFoundException e) {
-//                response.setStatus(404);
-//                getJsonResponse(new CurrencyNotFoundException("Currency not found - 404"), response);
                 writer = response.getWriter();
-                writer.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(new CurrencyNotFoundException("Currency not found - 404")));
-//                e.sendError(404, "Currency not found - 404", response);
-            } catch (RuntimeException r) {
-
+                writer.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(e.getMessage()));
+            } catch (DatabaseException e) {
+                sendJsonError(response, 500,objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(e.getMessage()));
 //                r.getMessage();
 //                response.setStatus(500);
 //                errorQuery = new ErrorQuery(r.getMessage());
-                errorQuery = new ErrorQuery(500, "Database is unavailable - 500", response);
+//                errorQuery = new ErrorQuery(500, "Database is unavailable - 500", response);
 //                getJsonResponse(errorQuery, response);
             }
         } catch (ValidationException e) {
-            e.sendError(400, "No currency code in the address - 400", response);
+            sendJsonError(response, 400, objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(e.getMessage()));
+//            e.sendError(400, "No currency code in the address - 400", response);
         }
 
 

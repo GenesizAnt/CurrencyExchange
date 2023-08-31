@@ -3,6 +3,7 @@ package com.example.servise;
 import com.example.error.CurrencyNotFoundException;
 import com.example.dto.CurrencyDTO;
 import com.example.entity.Currency;
+import com.example.error.DatabaseException;
 import com.example.test.CurrencyDAO;
 import com.example.test.CurrencyMapper;
 
@@ -42,12 +43,13 @@ public class CurrencyService {
                 CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
                 return Optional.ofNullable(currencyDTO);
             } else {
-                throw new CurrencyNotFoundException();
+                throw new CurrencyNotFoundException("Currency not found - 404");
             }
+        } catch (CurrencyNotFoundException e) {
+            throw new CurrencyNotFoundException(e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new DatabaseException("Database is unavailable - 500");
         }
-
 
 
 //        CurrencyDTO currencyDTO = currencyMapper.toDto(currency);

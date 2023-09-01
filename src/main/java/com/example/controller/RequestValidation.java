@@ -13,16 +13,21 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.example.Util.*;
+import static java.util.Map.entry;
 
 public class RequestValidation extends HttpServlet {
 
     //ToDo Перед вставкой валюты в базу ты вручную проверяешь её существование, лучше положиться на UNIQUE индекс для колонки с кодом валюты
     //ToDo В гит репозитории не следует класть папки с Tomcat
-    //ToDo Java. Для чего нужен Optional?
+    //ToDo создать ДТО и оправлять его на отдельную валидацию
+    //ToDo ModelMapper что это для ДТО? Если нужно будет превращать одну дто в другую похожую, почитай про ModelMapper
+    //ToDo Optional что это и как заменить НУЛЛ?
 
     //    CurrencyDAO currencyDAO = new CurrencyDAO();
     private CurrencyService currencyService = new CurrencyService();
@@ -56,6 +61,29 @@ public class RequestValidation extends HttpServlet {
             getJsonResponse(response, 404, e.getMessage());
         } catch (DatabaseException e) {
             getJsonResponse(response, 500, e.getMessage());
+        }
+    }
+
+    public void postCurrency(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+
+            Map<String, String> requestParameter = checkRequestParameter(request);
+
+            try {
+                currencyService.insertCurrency(requestParameter.get("code"),
+                                               requestParameter.get("name"),
+                                               requestParameter.get("sign"));
+
+                Optional<CurrencyDTO> currencyDTO = currencyService.getCurrencyByCode(requestParameter.get("code"));
+                getJsonResponse(response, 200, currencyDTO.get());
+
+            } catch (DatabaseException e) {
+                getJsonResponse(response, 409, e.getMessage());
+            } catch (RuntimeException e) {
+                getJsonResponse(response, 501, e.getMessage());
+            }
+        } catch (CurrencyNotFoundException e) {
+            getJsonResponse(response, 400, e.getMessage());
         }
     }
 
@@ -140,30 +168,6 @@ public class RequestValidation extends HttpServlet {
 //        }
 //    }
 
-//    public void postCurrency(String codeCurrency, String nameCurrency, String signCurrency, HttpServletResponse response) throws IOException {
-//
-//        Currency currencyByCode = currencyDAO.getCurrencyByCode(codeCurrency);
-//
-//        if (!(currencyByCode == null)) {
-//            response.setStatus(409);
-//            errorQuery = new ErrorQuery("Currency with this code already exists - 409");
-//            getJsonResponse(errorQuery, response);
-//        } else {
-//
-//            currencyDAO.insertCurrency(codeCurrency, nameCurrency, signCurrency);
-//
-//            try {
-//                currencyByCode = currencyDAO.getCurrencyByCode(codeCurrency);
-//                response.setStatus(200);
-//                getJsonResponse(currencyByCode, response);
-//            } catch (IOException e) {
-//                response.setStatus(500);
-//                errorQuery = new ErrorQuery("Database is unavailable - 500");
-//                getJsonResponse(errorQuery, response);
-//                throw new RuntimeException(e);
-//            }
-//        }
-//    }
 
 //    public void postExchangeRate(String baseCurrencyCode, String targetCurrencyCode, String rate, HttpServletResponse response) throws IOException {
 //

@@ -48,6 +48,7 @@ public class CurrencyBDConnectionPool implements ConnectionPool {
         Connection connection = (Connection) connectionPool.remove(connectionPool.size() - 1);
         usedConnections.add(connection);
         return connection;
+//        return null;
     }
 
     @Override

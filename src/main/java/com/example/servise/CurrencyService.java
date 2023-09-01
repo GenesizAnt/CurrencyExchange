@@ -7,6 +7,7 @@ import com.example.error.DatabaseException;
 import com.example.test.CurrencyDAO;
 import com.example.test.CurrencyMapper;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,4 +102,15 @@ public class CurrencyService {
             throw new DatabaseException("Database is unavailable - 500");
         }
     }
+
+    public void insertCurrency(String code, String name, String sign) {
+        try {
+            currencyDAO.insertCurrency(code, name, sign);
+        } catch (DatabaseException e) {
+            throw new DatabaseException("Currency with this code already exists - 409");
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Database is unavailable - 500");
+        }
+    }
+
 }

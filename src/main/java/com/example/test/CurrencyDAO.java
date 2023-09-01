@@ -1,6 +1,7 @@
 package com.example.test;
 
 import com.example.entity.Currency;
+import com.example.error.DatabaseException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -47,7 +48,7 @@ public class CurrencyDAO {
             ResultSet resultSet = statement.getResultSet();
             if (resultSet.isBeforeFirst()) {
                 if (resultSet.next()) {
-                     Currency currency = new Currency(
+                    Currency currency = new Currency(
                             resultSet.getInt("id"),
                             resultSet.getString("code"),
                             resultSet.getString("fullName"),
@@ -88,5 +89,25 @@ public class CurrencyDAO {
             throw new RuntimeException(e);
         }
     }
+
+    public void insertCurrency(String code, String name, String sign) {
+        String insertCurrencyCommand = "INSERT INTO currencies (code, fullName, sign) VALUES (?, ?, ?)";
+
+        try (Connection connection = getConnectionPool();
+             PreparedStatement statement = connection.prepareStatement(insertCurrencyCommand)) {
+
+            statement.setString(1, code);
+            statement.setString(2, name);
+            statement.setString(3, sign);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+
 }
 

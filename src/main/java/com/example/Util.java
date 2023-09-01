@@ -1,5 +1,6 @@
 package com.example;
 
+import com.example.error.CurrencyNotFoundException;
 import com.example.error.ValidationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
+
+import static java.util.Map.entry;
 
 public class Util {
 
@@ -35,6 +39,27 @@ public class Util {
             }
         } catch (ValidationException e) {
             throw new ValidationException(e.getMessage());
+        }
+    }
+
+    public static Map<String, String> checkRequestParameter(HttpServletRequest request) throws CurrencyNotFoundException {
+        String empty = "";
+        String codeCurrency = request.getParameter("code");
+        String nameCurrency = request.getParameter("name");
+        String signCurrency = request.getParameter("sign");
+
+        if (codeCurrency.equals(empty) || codeCurrency.length() != CORRECT_COUNT_LETTER_CURRENCY_NAME ||
+                codeCurrency.matches("\\d+") || !(codeCurrency.matches("[a-zA-Z]+"))) {
+            throw new CurrencyNotFoundException("Code currency " + codeCurrency + " is empty or incorrect - 400");
+        } else if (nameCurrency.equals(empty)) {
+            throw new CurrencyNotFoundException("Name currency " + nameCurrency + " is empty or incorrect - 400");
+        } else if (signCurrency.equals(empty) || !(signCurrency.matches("\\p{ASCII}")) || signCurrency.matches("\\d+")) {
+            throw new CurrencyNotFoundException("Sign currency " + signCurrency + " is empty or incorrect - 400");
+        } else {
+            return Map.ofEntries(
+                    entry("code", codeCurrency),
+                    entry("name", nameCurrency),
+                    entry("sign", signCurrency));
         }
     }
 

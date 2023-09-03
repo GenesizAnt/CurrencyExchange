@@ -1,32 +1,36 @@
-//package com.example.currencyservlet;
-//
-//import com.example.controller.QueriesControl;
-//import com.example.error.ErrorQuery;
-//
-//import jakarta.servlet.ServletException;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.*;
-//import java.io.IOException;
-//
-//import static com.example.Util.CORRECT_COUNT_LETTER_CURRENCY_NAME;
-//import static com.example.Util.getJsonResponse;
-//
-//@WebServlet("/exchangeRates")
-//public class ExchangeRateServlet extends HttpServlet {
-//
+package com.example.currencyservlet;
+
+import com.example.controller.RequestValidation;
+import com.example.error.ErrorQuery;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+
+import static com.example.Util.CORRECT_COUNT_LETTER_CURRENCY_NAME;
+import static com.example.Util.getJsonResponse;
+
+@WebServlet("/exchangeRates")
+public class ExchangeRateServlet extends RequestValidation {
+
 //    private QueriesControl queriesControl = new QueriesControl();
-//    private ErrorQuery errorQuery;
-//
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//
+    private ErrorQuery errorQuery;
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 //        queriesControl.getAllExchangeRates(response);
-//
-//    }
-//
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//
+
+        getAllExchangeRates(response);
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+//        postCurrency(request, response);
+
 //        String empty = "";
 //
 //        String baseCurrencyCode = request.getParameter("baseCurrencyCode");
@@ -52,5 +56,5 @@
 //            queriesControl.postExchangeRate(baseCurrencyCode, targetCurrencyCode, rate, response);
 //
 //        }
-//    }
-//}
+    }
+}

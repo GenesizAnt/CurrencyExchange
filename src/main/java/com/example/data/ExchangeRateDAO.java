@@ -1,51 +1,48 @@
 package com.example.data;
 
 import com.example.entity.Currency;
-import com.example.test.ConnectionPool;
-import com.example.zdelete.ConnectionBuilder;
+import com.example.entity.ExchangeRate;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-public class ExchangeRateDAO {
+public class ExchangeRateDAO extends EntityDAO {
 
     private ConnectionPool connectionPool;
 
-    public void setConnectionPool(ConnectionPool connectionPool) {
-        this.connectionPool = connectionPool;
-    }
+    public Optional<List<ExchangeRate>> getAllExchangeRates() {
+        String getAllExchangeRateCommand = "SELECT * FROM exchangeRates";
 
-    public Connection getConnectionPool() throws SQLException {
-        return connectionPool.getConnection();
-    }
-
-    public ArrayList<Currency> getExchangeRateByCode(String baseCurrencyCode, String targetCurrencyCode) throws SQLException {
-
-        String getExchangeRateByCodeCommand = "SELECT * FROM currencies";
-        ArrayList<Currency> currencyList = new ArrayList<>();
-
-
-        try(Connection connection = getConnectionPool();
-            PreparedStatement statement = connection.prepareStatement(getExchangeRateByCodeCommand)) {
+        Connection connection = getConnectionPool();
+        PreparedStatement statement;
+        try {
+            statement = connection.prepareStatement(getAllExchangeRateCommand);
 
             statement.execute();
             ResultSet resultSet = statement.getResultSet();
-
             if (resultSet.isBeforeFirst()) {
+                List<ExchangeRate> exchangeRates = new ArrayList<>();
                 while (resultSet.next()) {
-                    Currency currency = new Currency(
+                    exchangeRates.add(new ExchangeRate(
                             resultSet.getInt("id"),
-                            resultSet.getString("code"),
-                            resultSet.getString("fullName"),
-                            resultSet.getString("sign"));
-                    currencyList.add(currency);
+                            resultSet.getInt("baseCurrencyId"),
+                            resultSet.getInt("targetCurrencyId"),
+                            resultSet.getBigDecimal("rate")));
                 }
+                getPool().releaseConnection(connection);
+                return Optional.of(exchangeRates);
+            } else {
+                getPool().releaseConnection(connection);
+                return Optional.empty();
             }
-            connectionPool.releaseConnection(connection);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return currencyList;
     }
 }

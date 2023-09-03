@@ -1,11 +1,10 @@
 package com.example.controller;
 
-import com.example.error.CurrencyNotFoundException;
-import com.example.error.DatabaseException;
-import com.example.error.ErrorQuery;
+import com.example.dto.ExchangeRateDTO;
+import com.example.error.*;
 import com.example.dto.CurrencyDTO;
-import com.example.error.ValidationException;
 import com.example.servise.CurrencyService;
+import com.example.servise.ExchangeRateService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +33,7 @@ public class RequestValidation extends HttpServlet {
     private ErrorQuery errorQuery;
     private ObjectMapper objectMapper = new ObjectMapper();
     private PrintWriter writer;
+    private ExchangeRateService exchangeRateService = new ExchangeRateService();
 
 
     public void getCurrency(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -87,22 +87,28 @@ public class RequestValidation extends HttpServlet {
         }
     }
 
-//    public void getAllExchangeRates(HttpServletResponse response) throws IOException {
-//        ArrayList<ExchangeRate> exchangeRates;
-//
+    public void getAllExchangeRates(HttpServletResponse response) throws IOException {
+
+        try {
+            Optional<List<ExchangeRateDTO>> exchangeRateDTOList = exchangeRateService.getAllExchangeRates();
+            getJsonResponse(response, 200, exchangeRateDTOList.get());
+        } catch (ExchangeRateNotFoundException e) {
+            getJsonResponse(response, 404, e.getMessage());
+        } catch (DatabaseException e) {
+            getJsonResponse(response, 500, e.getMessage());
+        }
+
+    }
+
+//    public void getAllCurrency(HttpServletResponse response) throws IOException {
 //        try {
-//            exchangeRates = currencyDAO.getAllExchangeRates();
-//        } catch (Exception e) {
-//            response.setStatus(500);
-//            errorQuery = new ErrorQuery("Database is unavailable - 500");
-//            getJsonResponse(errorQuery, response);
-//            throw new RuntimeException(e);
+//            Optional<List<CurrencyDTO>> allCurrency = currencyService.getAllCurrency();
+//            getJsonResponse(response, 200, allCurrency.get());
+//        } catch (CurrencyNotFoundException e) {
+//            getJsonResponse(response, 404, e.getMessage());
+//        } catch (DatabaseException e) {
+//            getJsonResponse(response, 500, e.getMessage());
 //        }
-//
-//        for (ExchangeRate rates : exchangeRates) {
-//            getJsonResponse(rates, response);
-//        }
-//        response.setStatus(200);
 //    }
 
 //    public void getExchangeRate(String codeExchangeRate, HttpServletResponse response) throws IOException {

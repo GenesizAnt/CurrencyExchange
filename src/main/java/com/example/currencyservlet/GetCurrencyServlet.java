@@ -3,15 +3,11 @@ package com.example.currencyservlet;
 import com.example.controller.RequestValidation;
 import com.example.error.ErrorQuery;
 
-import com.example.test.CurrencyDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
-import java.util.Optional;
-
-import static com.example.Util.*;
 
 @WebServlet("/currency/*")
 public class GetCurrencyServlet extends RequestValidation {

@@ -1,8 +1,9 @@
-package com.example.data;
+package com.example.test;
 
+import com.example.data.CurrencyDB;
 import com.example.entity.Currency;
 import com.example.entity.ExchangeRate;
-import com.example.test.ConnectionPool;
+import com.example.data.ConnectionPool;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -111,97 +112,97 @@ public class CurrencyDAObefore {
         return currencyList;
     }
 
-    public ArrayList<ExchangeRate> getAllExchangeRates() {
+//    public ArrayList<ExchangeRate> getAllExchangeRates() {
+//
+//        String getAllExchangeRatesCommand = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
+//                "FROM exchangeRates\n" +
+//                "INNER JOIN currencies base ON exchangeRates.BaseCurrencyId = base.ID\n" +
+//                "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n";
+//
+//        ArrayList<ExchangeRate> exchangeRatesList = new ArrayList<>();
+//        try {
+//            currencyDB.connect();
+//            ResultSet resultSet = currencyDB.getStatement().executeQuery(getAllExchangeRatesCommand);
+//            while (resultSet.next()) {
+//                ExchangeRate exchangeRate = new ExchangeRate();
+//                exchangeRate.setId(resultSet.getInt("id"));
+//                exchangeRate.setBaseCurrency(getCurrencyByCode(resultSet.getString("base")));
+//                exchangeRate.setTargetCurrency(getCurrencyByCode(resultSet.getString("target")));
+//                exchangeRate.setRate(resultSet.getDouble("rate"));
+//                exchangeRatesList.add(exchangeRate);
+//            }
+//            resultSet.close();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        currencyDB.disconnect();
+//        return exchangeRatesList;
+//    }
 
-        String getAllExchangeRatesCommand = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
-                "FROM exchangeRates\n" +
-                "INNER JOIN currencies base ON exchangeRates.BaseCurrencyId = base.ID\n" +
-                "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n";
+//    public ExchangeRate getExchangeRateByCode(String baseCurrencyCode, String targetCurrencyCode) {
+//
+//        String getExchangeRateByCodeCommand = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
+//                "FROM exchangeRates\n" +
+//                "INNER JOIN currencies base ON exchangeRates.BaseCurrencyId = base.ID\n" +
+//                "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n" +
+//                "WHERE Base='" + baseCurrencyCode + "' AND Target='" + targetCurrencyCode + "'";
+//
+//        currencyDB.connect();
+//        try {
+//            ResultSet resultSet = currencyDB.getStatement().executeQuery(getExchangeRateByCodeCommand);
+//            if (!resultSet.next()) {
+//                resultSet.close();
+//                currencyDB.disconnect();
+//                return null;
+//            } else {
+//                ExchangeRate exchangeRate = new ExchangeRate();
+//                exchangeRate.setId(resultSet.getInt("ID"));
+//                exchangeRate.setBaseCurrency(getCurrencyByCode(baseCurrencyCode));
+//                exchangeRate.setTargetCurrency(getCurrencyByCode(targetCurrencyCode));
+//                exchangeRate.setRate(resultSet.getDouble("rate"));
+//                resultSet.close();
+//                currencyDB.disconnect();
+//                return exchangeRate;
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
-        ArrayList<ExchangeRate> exchangeRatesList = new ArrayList<>();
-        try {
-            currencyDB.connect();
-            ResultSet resultSet = currencyDB.getStatement().executeQuery(getAllExchangeRatesCommand);
-            while (resultSet.next()) {
-                ExchangeRate exchangeRate = new ExchangeRate();
-                exchangeRate.setId(resultSet.getInt("id"));
-                exchangeRate.setBaseCurrency(getCurrencyByCode(resultSet.getString("base")));
-                exchangeRate.setTargetCurrency(getCurrencyByCode(resultSet.getString("target")));
-                exchangeRate.setRate(resultSet.getDouble("rate"));
-                exchangeRatesList.add(exchangeRate);
-            }
-            resultSet.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        currencyDB.disconnect();
-        return exchangeRatesList;
-    }
-
-    public ExchangeRate getExchangeRateByCode(String baseCurrencyCode, String targetCurrencyCode) {
-
-        String getExchangeRateByCodeCommand = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
-                "FROM exchangeRates\n" +
-                "INNER JOIN currencies base ON exchangeRates.BaseCurrencyId = base.ID\n" +
-                "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n" +
-                "WHERE Base='" + baseCurrencyCode + "' AND Target='" + targetCurrencyCode + "'";
-
-        currencyDB.connect();
-        try {
-            ResultSet resultSet = currencyDB.getStatement().executeQuery(getExchangeRateByCodeCommand);
-            if (!resultSet.next()) {
-                resultSet.close();
-                currencyDB.disconnect();
-                return null;
-            } else {
-                ExchangeRate exchangeRate = new ExchangeRate();
-                exchangeRate.setId(resultSet.getInt("ID"));
-                exchangeRate.setBaseCurrency(getCurrencyByCode(baseCurrencyCode));
-                exchangeRate.setTargetCurrency(getCurrencyByCode(targetCurrencyCode));
-                exchangeRate.setRate(resultSet.getDouble("rate"));
-                resultSet.close();
-                currencyDB.disconnect();
-                return exchangeRate;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public ArrayList<ExchangeRate> getExchangeThroughTransaction(String baseCurrency, String targetCurrency) {
-
-        String getByExchangeRateCommand = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
-                "FROM exchangeRates\n" +
-                "INNER JOIN currencies base ON exchangeRates.BaseCurrencyId = base.ID\n" +
-                "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n" +
-                "WHERE Base='USD' AND Target='" + baseCurrency + "' OR Base='USD' AND Target='" + targetCurrency + "'";
-
-        try {
-            currencyDB.connect();
-            ResultSet resultSet = currencyDB.getStatement().executeQuery(getByExchangeRateCommand);
-            ArrayList<ExchangeRate> exchangeRatesForTransaction = new ArrayList<>();
-            if (!resultSet.next()) {
-                resultSet.close();
-                currencyDB.disconnect();
-                return null;
-            } else {
-                ExchangeRate exchangeRate = new ExchangeRate();
-                exchangeRate.setId(resultSet.getInt("id"));
-                exchangeRate.setBaseCurrency(getCurrencyByCode(resultSet.getString("base")));
-                exchangeRate.setTargetCurrency(getCurrencyByCode(resultSet.getString("target")));
-                exchangeRate.setRate(resultSet.getDouble("rate"));
-
-                exchangeRatesForTransaction.add(exchangeRate);
-
-                resultSet.close();
-                currencyDB.disconnect();
-                return exchangeRatesForTransaction;
-            }
-        } catch (
-                SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public ArrayList<ExchangeRate> getExchangeThroughTransaction(String baseCurrency, String targetCurrency) {
+//
+//        String getByExchangeRateCommand = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
+//                "FROM exchangeRates\n" +
+//                "INNER JOIN currencies base ON exchangeRates.BaseCurrencyId = base.ID\n" +
+//                "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n" +
+//                "WHERE Base='USD' AND Target='" + baseCurrency + "' OR Base='USD' AND Target='" + targetCurrency + "'";
+//
+//        try {
+//            currencyDB.connect();
+//            ResultSet resultSet = currencyDB.getStatement().executeQuery(getByExchangeRateCommand);
+//            ArrayList<ExchangeRate> exchangeRatesForTransaction = new ArrayList<>();
+//            if (!resultSet.next()) {
+//                resultSet.close();
+//                currencyDB.disconnect();
+//                return null;
+//            } else {
+//                ExchangeRate exchangeRate = new ExchangeRate();
+//                exchangeRate.setId(resultSet.getInt("id"));
+//                exchangeRate.setBaseCurrency(getCurrencyByCode(resultSet.getString("base")));
+//                exchangeRate.setTargetCurrency(getCurrencyByCode(resultSet.getString("target")));
+//                exchangeRate.setRate(resultSet.getDouble("rate"));
+//
+//                exchangeRatesForTransaction.add(exchangeRate);
+//
+//                resultSet.close();
+//                currencyDB.disconnect();
+//                return exchangeRatesForTransaction;
+//            }
+//        } catch (
+//                SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     public void insertExchangeRate(Currency baseCurrency, Currency targetCurrency, String rateExchange) {
 

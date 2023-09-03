@@ -2,7 +2,7 @@
 //
 //import com.example.error.ErrorQuery;
 //import com.example.entity.Currency;
-//import com.example.test.CurrencyDAO;
+//import com.example.data.CurrencyDAO;
 //import jakarta.servlet.http.HttpServletResponse;
 //
 //import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.example.test;
+package com.example.data;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -48,7 +48,6 @@ public class CurrencyBDConnectionPool implements ConnectionPool {
         Connection connection = (Connection) connectionPool.remove(connectionPool.size() - 1);
         usedConnections.add(connection);
         return connection;
-//        return null;
     }
 
     @Override

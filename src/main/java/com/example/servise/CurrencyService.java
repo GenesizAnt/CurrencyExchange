@@ -4,7 +4,7 @@ import com.example.error.CurrencyNotFoundException;
 import com.example.dto.CurrencyDTO;
 import com.example.entity.Currency;
 import com.example.error.DatabaseException;
-import com.example.data.CurrencyDbDAO;
+import com.example.data.CurrencyDAO;
 import com.example.test.CurrencyMapper;
 
 import java.util.List;
@@ -12,12 +12,12 @@ import java.util.Optional;
 
 public class CurrencyService {
 
-    private final CurrencyDbDAO currencyDbDAO;
+    private final CurrencyDAO currencyDAO;
     private final CurrencyMapper currencyMapper;
 //    private final ExchangeRateMapper exchangeRateMapper;
 
     public CurrencyService() {
-        this.currencyDbDAO = new CurrencyDbDAO();
+        this.currencyDAO = new CurrencyDAO();
         this.currencyMapper = new CurrencyMapper();
 //        this.exchangeRateMapper = new ExchangeRateMapper();
     }
@@ -39,7 +39,7 @@ public class CurrencyService {
 
 
         try {
-            Optional<Currency> currency = currencyDbDAO.getCurrencyByCode(code);
+            Optional<Currency> currency = currencyDAO.getCurrencyByCode(code);
             if (currency.isPresent()) {
                 CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
                 return Optional.ofNullable(currencyDTO);
@@ -88,7 +88,7 @@ public class CurrencyService {
 
 
         try {
-            Optional<List<Currency>> currencyList = currencyDbDAO.getAllCurrency();
+            Optional<List<Currency>> currencyList = currencyDAO.getAllCurrency();
             if (currencyList.isPresent()) {
                 List<CurrencyDTO> currencyDTOList = currencyMapper.toDtoList(currencyList.get());
                 return Optional.of(currencyDTOList);
@@ -105,7 +105,7 @@ public class CurrencyService {
 
     public void insertCurrency(String code, String name, String sign) {
         try {
-            currencyDbDAO.insertCurrency(code, name, sign);
+            currencyDAO.insertCurrency(code, name, sign);
         } catch (DatabaseException e) {
             throw new DatabaseException("Currency with this code already exists - 409");
         } catch (RuntimeException e) {
@@ -119,7 +119,7 @@ public class CurrencyService {
 //        return Optional.ofNullable(currencyDTO);
 
         try {
-            Optional<Currency> currency = currencyDbDAO.getCurrencyById(id);
+            Optional<Currency> currency = currencyDAO.getCurrencyById(id);
             if (currency.isPresent()) {
                 CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
                 return Optional.ofNullable(currencyDTO);

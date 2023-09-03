@@ -12,13 +12,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static com.example.Util.*;
-import static java.util.Map.entry;
 
 public class RequestValidation extends HttpServlet {
 
@@ -88,7 +86,6 @@ public class RequestValidation extends HttpServlet {
     }
 
     public void getAllExchangeRates(HttpServletResponse response) throws IOException {
-
         try {
             Optional<List<ExchangeRateDTO>> exchangeRateDTOList = exchangeRateService.getAllExchangeRates();
             getJsonResponse(response, 200, exchangeRateDTOList.get());
@@ -97,22 +94,28 @@ public class RequestValidation extends HttpServlet {
         } catch (DatabaseException e) {
             getJsonResponse(response, 500, e.getMessage());
         }
-
     }
 
-//    public void getAllCurrency(HttpServletResponse response) throws IOException {
-//        try {
-//            Optional<List<CurrencyDTO>> allCurrency = currencyService.getAllCurrency();
-//            getJsonResponse(response, 200, allCurrency.get());
-//        } catch (CurrencyNotFoundException e) {
-//            getJsonResponse(response, 404, e.getMessage());
-//        } catch (DatabaseException e) {
-//            getJsonResponse(response, 500, e.getMessage());
-//        }
-//    }
+    public void getExchangeRate(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-//    public void getExchangeRate(String codeExchangeRate, HttpServletResponse response) throws IOException {
-//
+        try {
+            isCorrectCodeExchangeRate(request);
+            String exchangeRateCode = getCodeFromURL(request);
+            String[] currenciesForExchange = getCurrenciesForExchange(exchangeRateCode);
+
+            try {
+                Optional<ExchangeRateDTO> exchangeRateDTO = exchangeRateService.getExchangeRateByCode(currenciesForExchange[0],
+                                                                                                      currenciesForExchange[1]);
+                getJsonResponse(response, 200, exchangeRateDTO.get());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        } catch (ValidationException e) {
+            getJsonResponse(response, 400, e.getMessage());
+        }
+
+
 //        try {
 //            String[] codeCurrenciesForExchange = getCurrenciesForExchange(codeExchangeRate);
 //            ExchangeRate exchangeRate = currencyDAO.getExchangeRateByCode(codeCurrenciesForExchange[0], codeCurrenciesForExchange[1]);
@@ -130,7 +133,20 @@ public class RequestValidation extends HttpServlet {
 //            getJsonResponse(errorQuery, response);
 //            throw new RuntimeException(e);
 //        }
-//    }
+
+
+
+//        if (isCorrectCodeExchangeRate(request)) {
+//            String exchangeRateCode = getCodeFromURL(request);
+//            queriesControl.getExchangeRate(exchangeRateCode, response);
+//        } else {
+//            response.setStatus(400);
+//            errorQuery = new ErrorQuery("Incorrect request - 400");
+//            getJsonResponse(errorQuery, response);
+//        }
+//
+
+    }
 
 //    public void getExchangeTransaction(String baseCurrency, String targetCurrency, String amount, HttpServletResponse response) throws IOException {
 //

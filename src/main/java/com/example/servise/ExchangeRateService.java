@@ -1,8 +1,8 @@
 package com.example.servise;
 
-import com.example.data.CurrencyDbDAO;
 //import com.example.data.ExchangeRateDAO;
 import com.example.data.ExchangeRateDAO;
+import com.example.dto.CurrencyDTO;
 import com.example.dto.ExchangeRateDTO;
 import com.example.entity.ExchangeRate;
 import com.example.error.CurrencyNotFoundException;
@@ -42,5 +42,23 @@ public class ExchangeRateService {
         } catch (Exception e) {
             throw new DatabaseException("Database is unavailable - 500");
         }
+    }
+
+    public Optional<ExchangeRateDTO> getExchangeRateByCode(String baseCurrencyCode, String targetCurrencyCode) {
+
+        try {
+            Optional<ExchangeRate> exchangeRate = exchangeRateDAO.getExchangeRateCode(baseCurrencyCode, targetCurrencyCode);
+            if (exchangeRate.isPresent()) {
+                ExchangeRateDTO exchangeRateDTO = exchangeRateMapper.toDto(exchangeRate.get()); //ToDo передавить Оптионал или нет??
+                return Optional.ofNullable(exchangeRateDTO);
+            } else {
+                throw new CurrencyNotFoundException("Currency not found - 404");
+            }
+        } catch (CurrencyNotFoundException e) {
+//            throw new CurrencyNotFoundException(e.getMessage());
+        } catch (Exception e) {
+            throw new DatabaseException("Database is unavailable - 500");
+        }
+        return null;
     }
 }

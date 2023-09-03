@@ -15,7 +15,7 @@ import static java.util.Map.entry;
 public class Util {
 
     public static final int CORRECT_COUNT_LETTER_CURRENCY_NAME = 3;
-    public static final int CODE_POSITION_IN_URL = 6;
+    public static final int CODE_POSITION_IN_URL = 5;//6
     public static final int CORRECT_COUNT_LETTER_EXCHANGE_RATE_NAME = 6;
 
     static ObjectMapper objectMapper = new ObjectMapper();
@@ -30,16 +30,16 @@ public class Util {
 
     public static String getCodeFromURL(HttpServletRequest request) throws ValidationException {
         String[] splitURL = getSplitURL(request);
-        String code = splitURL[splitURL.length - 1].toUpperCase();
-        try {
-            if (code.length() > CORRECT_COUNT_LETTER_CURRENCY_NAME) {
-                throw new ValidationException("No currency code in the address - 400");
-            } else {
-                return code;
-            }
-        } catch (ValidationException e) {
-            throw new ValidationException(e.getMessage());
-        }
+        return splitURL[splitURL.length - 1].toUpperCase();
+//        try {
+//            if (code.length() > CORRECT_COUNT_LETTER_CURRENCY_NAME) {
+//                throw new ValidationException("No currency code in the address - 400");
+//            } else {
+//                return code;
+//            }
+//        } catch (ValidationException e) {
+//            throw new ValidationException(e.getMessage());
+//        }
     }
 
     public static Map<String, String> checkRequestParameter(HttpServletRequest request) throws CurrencyNotFoundException {
@@ -87,9 +87,18 @@ public class Util {
         }
     }
 
-    public static boolean isCorrectCodeExchangeRate(HttpServletRequest request) {
+    public static boolean isCorrectCodeExchangeRate(HttpServletRequest request) throws ValidationException {
         String[] splitURL = getSplitURL(request);
-        return isCorrectCode(splitURL, CORRECT_COUNT_LETTER_EXCHANGE_RATE_NAME);
+        try {
+            if (isCorrectCode(splitURL, CORRECT_COUNT_LETTER_EXCHANGE_RATE_NAME)) {
+                return true;
+            } else {
+                throw new ValidationException("No currency code in the address - 400");
+            }
+        } catch (ValidationException e) {
+            throw new ValidationException(e.getMessage());
+        }
+//        return isCorrectCode(splitURL, CORRECT_COUNT_LETTER_EXCHANGE_RATE_NAME);
     }
 
     private static String[] getSplitURL(HttpServletRequest request) {

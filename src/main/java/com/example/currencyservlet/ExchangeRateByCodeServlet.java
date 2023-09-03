@@ -1,24 +1,26 @@
-//package com.example.currencyservlet;
-//
-//import com.example.controller.QueriesControl;
-//import com.example.error.ErrorQuery;
-//
-//import jakarta.servlet.ServletException;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.*;
-//import java.io.IOException;
-//
-//import static com.example.Util.*;
-//
-//@WebServlet("/exchangeRate/*")
-//public class ExchangeRateByCodeServlet extends HttpServlet {
-//
+package com.example.currencyservlet;
+
+import com.example.controller.RequestValidation;
+import com.example.error.ErrorQuery;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+
+import static com.example.Util.*;
+
+@WebServlet("/exchangeRate/*")
+public class ExchangeRateByCodeServlet extends RequestValidation {
+
 //    private QueriesControl queriesControl = new QueriesControl();
 //    private ErrorQuery errorQuery;
-//
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        getExchangeRate(request, response);
+
 //        if (isCorrectCodeExchangeRate(request)) {
 //            String exchangeRateCode = getCodeFromURL(request);
 //            queriesControl.getExchangeRate(exchangeRateCode, response);
@@ -27,20 +29,20 @@
 //            errorQuery = new ErrorQuery("Incorrect request - 400");
 //            getJsonResponse(errorQuery, response);
 //        }
-//    }
-//
-//    @Override
-//    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        String method = req.getMethod();
-//        if (!(method.equals("PATCH"))) {
-//            super.service(req, resp);
-//            return;
-//        }
-//        this.doPatch(req, resp);
-//    }
-//
-//    protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
-//
+    }
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String method = req.getMethod();
+        if (!(method.equals("PATCH"))) {
+            super.service(req, resp);
+            return;
+        }
+        this.doPatch(req, resp);
+    }
+
+    protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
 //        String empty = "";
 //        String rate = request.getParameter("rate");
 //
@@ -53,11 +55,11 @@
 //            errorQuery = new ErrorQuery("Incorrect request - 400");
 //            getJsonResponse(errorQuery, response);
 //        }
-//    }
-//
-//
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//
-//    }
-//}
+    }
+
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    }
+}

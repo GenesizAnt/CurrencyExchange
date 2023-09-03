@@ -1,10 +1,7 @@
 package com.example.data;
 
 import com.example.entity.Currency;
-import com.example.entity.ExchangeRate;
-import com.example.error.DatabaseException;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CurrencyDbDAO extends EntityDAO {
+public class CurrencyDAO extends EntityDAO {
 
 
 //    private ConnectionPool connectionPool;

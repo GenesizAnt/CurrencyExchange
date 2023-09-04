@@ -59,7 +59,7 @@ public class CurrencyDAO extends EntityDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
+        getPool().releaseConnection(connection);
         return Optional.empty();
     }
 
@@ -135,6 +135,7 @@ public class CurrencyDAO extends EntityDAO {
             statement.setString(2, name);
             statement.setString(3, sign);
             statement.executeUpdate();
+
             getPool().releaseConnection(connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -195,15 +196,15 @@ public class CurrencyDAO extends EntityDAO {
                     getPool().releaseConnection(connection);
                     return Optional.of(currency);
                 } else {
-//                    connectionPool.releaseConnection(connection);
+                    getPool().releaseConnection(connection);
                     return Optional.empty();
                 }
             }
-            getPool().releaseConnection(connection);
+//            getPool().releaseConnection(connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
+//        getPool().releaseConnection(connection);
         return Optional.empty();
     }
 

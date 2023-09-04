@@ -29,7 +29,7 @@ public class ExchangeRateServlet extends RequestValidation {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-//        postCurrency(request, response);
+        postExchangeRate(request, response);
 
 //        String empty = "";
 //

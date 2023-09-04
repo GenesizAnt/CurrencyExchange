@@ -1,22 +1,23 @@
 package com.example.servise;
 
 //import com.example.data.ExchangeRateDAO;
+
 import com.example.data.ExchangeRateDAO;
-import com.example.dto.CurrencyDTO;
 import com.example.dto.ExchangeRateDTO;
 import com.example.entity.ExchangeRate;
-import com.example.error.CurrencyNotFoundException;
 import com.example.error.DatabaseException;
 import com.example.error.ExchangeRateNotFoundException;
 import com.example.test.ExchangeRateMapper;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class ExchangeRateService {
 
     private final ExchangeRateDAO exchangeRateDAO;
-//    private final CurrencyDbDAO currencyDbDAO;
+    //    private final CurrencyDbDAO currencyDbDAO;
     private final ExchangeRateMapper exchangeRateMapper;
 
     public ExchangeRateService() {
@@ -49,16 +50,32 @@ public class ExchangeRateService {
         try {
             Optional<ExchangeRate> exchangeRate = exchangeRateDAO.getExchangeRateCode(baseCurrencyCode, targetCurrencyCode);
             if (exchangeRate.isPresent()) {
-                ExchangeRateDTO exchangeRateDTO = exchangeRateMapper.toDto(exchangeRate.get()); //ToDo передавить Оптионал или нет??
+                ExchangeRateDTO exchangeRateDTO = exchangeRateMapper.toDto(exchangeRate.get());
                 return Optional.ofNullable(exchangeRateDTO);
-            } else {
-                throw new CurrencyNotFoundException("Currency not found - 404");
             }
-        } catch (CurrencyNotFoundException e) {
-//            throw new CurrencyNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new DatabaseException("Database is unavailable - 500");
         }
-        return null;
+        return Optional.empty();
     }
+
+    public void insertExchangeRate(ExchangeRateDTO exchangeRateDTO) {
+        try {
+//            exchangeRateDAO.insertExchangeRate(baseCurrencyId, targetCurrencyId, rate);
+            exchangeRateDAO.insertExchangeRate(exchangeRateDTO.getBaseCurrency().getId(),
+                                               exchangeRateDTO.getTargetCurrency().getId(),
+                                               exchangeRateDTO.getRate());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Database is unavailable - 500");
+        }
+    }
+
+    public Optional<ExchangeRateDTO> getExchangeRateForSave(Map<String, String> requestParameter) {
+        ExchangeRateDTO exchangeRateDTO = exchangeRateMapper.toModel(requestParameter);
+        return Optional.ofNullable(exchangeRateDTO);
+    }
+
+//    public void insertExchangeRate(Optional<ExchangeRateDTO> exchangeRateDTO) {
+//
+//    }
 }

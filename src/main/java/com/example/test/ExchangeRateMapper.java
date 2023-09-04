@@ -8,9 +8,12 @@ import com.example.servise.CurrencyService;
 import org.modelmapper.*;
 import org.modelmapper.convention.MatchingStrategies;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.Map.entry;
 import static org.modelmapper.config.Configuration.AccessLevel.PRIVATE;
 
 public class ExchangeRateMapper {
@@ -71,7 +74,7 @@ public class ExchangeRateMapper {
 //        return list;
     }
 
-    public ExchangeRateDTO toDto(ExchangeRate exchangeRate) { //ToDo добавлять ли сюда оптионал? и справить в аналоге про Валюты + изменить код как внизу
+    public ExchangeRateDTO toDto(ExchangeRate exchangeRate) {
         ModelMapper mapper = getMapper();
         mapper.addConverter(new AbstractConverter<Integer, CurrencyDTO>() {
             @Override
@@ -85,14 +88,35 @@ public class ExchangeRateMapper {
         });
         return mapper.map(exchangeRate, ExchangeRateDTO.class);
     }
-//    public ExchangeRateDTO toDto(ExchangeRate exchangeRate) {
-//        CurrencyDTO baseCurrency = currencyService.getCurrencyById(exchangeRate.getBaseCurrency())
-//                .orElseThrow(() -> new CurrencyNotFoundException("Base currency not found"));
-//        CurrencyDTO targetCurrency = currencyService.getCurrencyById(exchangeRate.getTargetCurrency())
-//                .orElseThrow(() -> new CurrencyNotFoundException("Target currency not found"));
-//        ModelMapper mapper = getModelMapper();
-//        return mapper.map(exchangeRate, ExchangeRateDTO.class)
-//                .setBaseCurrency(baseCurrency)
-//                .setTargetCurrency(targetCurrency);
-//    }
+
+    public ExchangeRateDTO toModel(Map<String, String> requestParameter) {
+        ExchangeRateDTO exchangeRateDTO = new ExchangeRateDTO();
+        try {
+            exchangeRateDTO.setBaseCurrency(currencyService.getCurrencyByCode(requestParameter.get("baseCurrencyCode")).get());
+            exchangeRateDTO.setTargetCurrency(currencyService.getCurrencyByCode(requestParameter.get("targetCurrencyCode")).get());
+            exchangeRateDTO.setRate(BigDecimal.valueOf(Double.parseDouble(requestParameter.get("rate"))));
+        } catch (CurrencyNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+//        entry("baseCurrencyCode", baseCurrencyCode),
+//                entry("targetCurrencyCode", targetCurrencyCode),
+//                entry("rate", rate));
+
+//        ModelMapper mapper = getMapper();
+//        ExchangeRateDTO exchangeRateDTO = new ExchangeRateDTO();
+//        mapper.addConverter(new AbstractConverter<String, CurrencyDTO>() {
+//            @Override
+//            protected CurrencyDTO convert(String source) {
+//                try {
+//                    return currencyService.getCurrencyByCode(source).orElse(null);
+//                } catch (CurrencyNotFoundException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        });
+//        return mapper.map(exchangeRateDTO, ExchangeRateDTO.class);
+
+        return exchangeRateDTO;
+    }
 }

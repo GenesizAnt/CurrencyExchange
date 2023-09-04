@@ -23,21 +23,6 @@ public class CurrencyService {
     }
 
     public Optional<CurrencyDTO> getCurrencyByCode(String code) throws CurrencyNotFoundException {
-//        Currency currency = currencyDAO.getCurrencyByCode(code);
-//        if (currency != null) {
-//            CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
-//            return Optional.ofNullable(currencyDTO);
-//        }
-//
-////        if(currency.isPresent()) {
-////            CurrencyResDTO currencyResDTO = currencyMapper.toDTO(currency.get());
-////            return Optional.of(currencyResDTO);
-////        }
-////        return Optional.empty();
-//
-//        return null; // return Optional.empty();
-
-
         try {
             Optional<Currency> currency = currencyDAO.getCurrencyByCode(code);
             if (currency.isPresent()) {
@@ -51,20 +36,6 @@ public class CurrencyService {
         } catch (Exception e) {
             throw new DatabaseException("Database is unavailable - 500");
         }
-
-
-//        CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
-//        return Optional.ofNullable(currencyDTO);
-
-
-//        try {
-//            Currency currency = currencyDAO.getCurrencyByCode(code);
-//            CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
-//            return Optional.ofNullable(currencyDTO);
-//        } catch (Exception e) {
-//            throw new CurrencyNotFoundException();
-//        }
-
     }
 
 //    public Optional<List<CurrencyDTO>> findAllCurrencies() {

@@ -21,14 +21,6 @@ public class ExchangeRateByCodeServlet extends RequestValidation {
 
         getExchangeRate(request, response);
 
-//        if (isCorrectCodeExchangeRate(request)) {
-//            String exchangeRateCode = getCodeFromURL(request);
-//            queriesControl.getExchangeRate(exchangeRateCode, response);
-//        } else {
-//            response.setStatus(400);
-//            errorQuery = new ErrorQuery("Incorrect request - 400");
-//            getJsonResponse(errorQuery, response);
-//        }
     }
 
     @Override

@@ -16,6 +16,12 @@ public class ExchangeRateDTO {
         this.rate = rate;
     }
 
+    public ExchangeRateDTO(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, BigDecimal rate) {
+        this.baseCurrency = baseCurrency;
+        this.targetCurrency = targetCurrency;
+        this.rate = rate;
+    }
+
     public ExchangeRateDTO() {
 
     }

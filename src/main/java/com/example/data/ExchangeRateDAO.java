@@ -1,9 +1,8 @@
 package com.example.data;
 
-import com.example.dto.ExchangeRateDTO;
-import com.example.entity.Currency;
 import com.example.entity.ExchangeRate;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +13,7 @@ import java.util.Optional;
 
 public class ExchangeRateDAO extends EntityDAO {
 
-    private ConnectionPool connectionPool;
+//    private ConnectionPool connectionPool;
 
     public Optional<List<ExchangeRate>> getAllExchangeRates() {
         String getAllExchangeRateCommand = "SELECT * FROM exchangeRates";
@@ -80,6 +79,26 @@ public class ExchangeRateDAO extends EntityDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+//        getPool().releaseConnection(connection);
         return Optional.empty();
+    }
+
+    public void insertExchangeRate(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) {
+        String insertExchangeCommand = "INSERT INTO exchangeRates (baseCurrencyId, targetCurrencyId, rate) VALUES (?, ?, ?)";
+
+        Connection connection = getConnectionPool();
+        PreparedStatement statement;
+        try {
+            statement = connection.prepareStatement(insertExchangeCommand);
+
+            statement.setInt(1, baseCurrencyId);
+            statement.setInt(2, targetCurrencyId);
+            statement.setBigDecimal(3, rate);
+            statement.executeUpdate();
+
+            getPool().releaseConnection(connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -90,33 +90,14 @@ public class ExchangeRateMapper {
     }
 
     public ExchangeRateDTO toModel(Map<String, String> requestParameter) {
-        ExchangeRateDTO exchangeRateDTO = new ExchangeRateDTO();
+        ModelMapper modelMapper = new ModelMapper();
+        ExchangeRateDTO exchangeRateDTO = modelMapper.map(requestParameter, ExchangeRateDTO.class);
         try {
             exchangeRateDTO.setBaseCurrency(currencyService.getCurrencyByCode(requestParameter.get("baseCurrencyCode")).get());
             exchangeRateDTO.setTargetCurrency(currencyService.getCurrencyByCode(requestParameter.get("targetCurrencyCode")).get());
-            exchangeRateDTO.setRate(BigDecimal.valueOf(Double.parseDouble(requestParameter.get("rate"))));
         } catch (CurrencyNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-//        entry("baseCurrencyCode", baseCurrencyCode),
-//                entry("targetCurrencyCode", targetCurrencyCode),
-//                entry("rate", rate));
-
-//        ModelMapper mapper = getMapper();
-//        ExchangeRateDTO exchangeRateDTO = new ExchangeRateDTO();
-//        mapper.addConverter(new AbstractConverter<String, CurrencyDTO>() {
-//            @Override
-//            protected CurrencyDTO convert(String source) {
-//                try {
-//                    return currencyService.getCurrencyByCode(source).orElse(null);
-//                } catch (CurrencyNotFoundException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        });
-//        return mapper.map(exchangeRateDTO, ExchangeRateDTO.class);
-
         return exchangeRateDTO;
     }
 }

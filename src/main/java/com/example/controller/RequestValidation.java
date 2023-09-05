@@ -109,13 +109,13 @@ public class RequestValidation extends HttpServlet {
             try {
                 Optional<ExchangeRateDTO> exchangeRateDTO = exchangeRateService.getExchangeRateByCode(currenciesForExchange[0],
                         currenciesForExchange[1]);
-                if (exchangeRateDTO.isPresent()) {
-                    getJsonResponse(response, 200, exchangeRateDTO.get());
-                } else {
-                    getJsonResponse(response, 404, new ExchangeRateNotFoundException("ExchangeRate not found - 404")); //ToDo такая форма ошибки на нулл должна быть везде
-                }
+
+                getJsonResponse(response, 200, exchangeRateDTO.get());
+
             } catch (DatabaseException e) {
                 getJsonResponse(response, 500, e.getMessage());
+            } catch (ExchangeRateNotFoundException e) {
+                getJsonResponse(response, 404, e.getMessage());
             }
         } catch (ValidationException e) {
             getJsonResponse(response, 400, e.getMessage());
@@ -128,80 +128,29 @@ public class RequestValidation extends HttpServlet {
         try {
 
             Map<String, String> requestParameter = checkRequestParameterForExchangeRate(request);
-//            Optional<CurrencyDTO> baseCurrency = currencyService.getCurrencyByCode(requestParameter.get("baseCurrencyCode"));
-//            Optional<CurrencyDTO> targetCurrency = currencyService.getCurrencyByCode(requestParameter.get("targetCurrencyCode"));
-//            BigDecimal rate = BigDecimal.valueOf(Double.parseDouble(requestParameter.get("rate")));
-//            double rate = Double.parseDouble(requestParameter.get("rate"));
-//            Optional<ExchangeRateDTO> existsExchangeRateDTO = exchangeRateService.getExchangeRateByCode(
-//                                                                            requestParameter.get("targetCurrencyCode"),
-//                                                                            requestParameter.get("targetCurrencyCode"));
-//            if (existsExchangeRateDTO.isPresent()) {
-//                getJsonResponse(response, 409, "Exchange rate with this currency already exists - 409");
-//            } else {
+            Optional<ExchangeRateDTO> saveExchangeRateDTO = exchangeRateService.getExchangeRateForSave(requestParameter);
 
-                Optional<ExchangeRateDTO> saveExchangeRateDTO = exchangeRateService.getExchangeRateForSave(requestParameter);
+            if (exchangeRateService.isExchangeRateExist(saveExchangeRateDTO.get())) {
+                getJsonResponse(response, 409, "Exchange rate with this currency already exists - 409");
+            } else {
+
                 exchangeRateService.insertExchangeRate(saveExchangeRateDTO.get());
-//        exchangeRateService.insertExchangeRate("SEK", "PEK", BigDecimal.valueOf(10.86));
-//                exchangeRateService.insertExchangeRate(requestParameter.get("targetCurrencyCode"),
-//                                                       requestParameter.get("targetCurrencyCode"),
-//                                                       BigDecimal.valueOf(Double.parseDouble(requestParameter.get("rate"))));
+                try {
+                    Optional<ExchangeRateDTO> checkExchangeRateDTO = exchangeRateService.getExchangeRateByCode(
+                            saveExchangeRateDTO.get().getBaseCurrency().getCode(),
+                            saveExchangeRateDTO.get().getTargetCurrency().getCode());
 
-//                try {
-//                    Optional<ExchangeRateDTO> checkExchangeRateDTO = exchangeRateService.getExchangeRateByCode(baseCurrency.get().getCode(),
-//                            targetCurrency.get().getCode());
-//                    if (checkExchangeRateDTO.isPresent()) {
-//                        getJsonResponse(response, 200, exchangeRateDTO.get());
-//                    }
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
+                    getJsonResponse(response, 200, checkExchangeRateDTO.get());
+
+                } catch (DatabaseException e) {
+                    getJsonResponse(response, 500, e.getMessage());
+                } catch (ExchangeRateNotFoundException e) {
+                    getJsonResponse(response, 404, e.getMessage());
+                }
+            }
         } catch (ValidationException e) {
             getJsonResponse(response, 400, e.getMessage());
         }
-
-//        catch (CurrencyNotFoundException e) {
-//            getJsonResponse(response, 404, e.getMessage());
-//        }
-
-
-
-
-
-
-
-//        Currency baseCurrency = currencyDAO.getCurrencyByCode(baseCurrencyCode);
-//        Currency targetCurrency = currencyDAO.getCurrencyByCode(targetCurrencyCode);
-//
-//        ExchangeRate exchangeRate = currencyDAO.getExchangeRateByCode(baseCurrencyCode, targetCurrencyCode);
-//
-//        if (!(exchangeRate == null)) {
-//            response.setStatus(409);
-//            errorQuery = new ErrorQuery("Currency with this code already exists - 409");
-//            getJsonResponse(errorQuery, response);
-//        } else if (baseCurrency == null) {
-//            response.setStatus(404);
-//            errorQuery = new ErrorQuery("Currency with " + baseCurrencyCode + " code does not exist - 404");
-//            getJsonResponse(errorQuery, response);
-//        } else if (targetCurrency == null) {
-//            response.setStatus(404);
-//            errorQuery = new ErrorQuery("Currency with " + targetCurrencyCode + " code does not exist - 404");
-//            getJsonResponse(errorQuery, response);
-//        } else {
-//
-//            currencyDAO.insertExchangeRate(baseCurrency, targetCurrency, rate);
-//
-//            try {
-//                exchangeRate = currencyDAO.getExchangeRateByCode(baseCurrencyCode, targetCurrencyCode);
-//                response.setStatus(200);
-//                getJsonResponse(exchangeRate, response);
-//            } catch (IOException e) {
-//                response.setStatus(500);
-//                errorQuery = new ErrorQuery("Database is unavailable - 500");
-//                getJsonResponse(errorQuery, response);
-//                throw new RuntimeException(e);
-//            }
-//        }
     }
 
 //    public void patchExchangeRate(String exchangeRateCode, String rate, HttpServletResponse response) throws IOException {

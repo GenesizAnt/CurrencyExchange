@@ -1,5 +1,6 @@
 package com.example.servise;
 
+import com.example.data.EntityDAO;
 import com.example.error.CurrencyNotFoundException;
 import com.example.dto.CurrencyDTO;
 import com.example.entity.Currency;

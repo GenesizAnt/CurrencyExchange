@@ -34,7 +34,7 @@ public class CurrencyDAO extends EntityDAO {
     public Optional<Currency> getCurrencyByCode(String codeCurrency) {
         String getByCodeCommand = "SELECT * FROM currencies WHERE code = ?";
 
-        Connection connection = getConnectionPool();
+        Connection connection = getConnection();
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(getByCodeCommand);
@@ -50,9 +50,11 @@ public class CurrencyDAO extends EntityDAO {
                             resultSet.getString("fullName"),
                             resultSet.getString("sign"));
                     getPool().releaseConnection(connection);
+                    statement.close();
                     return Optional.of(currency);
                 } else {
                     getPool().releaseConnection(connection);
+                    statement.close();
                     return Optional.empty();
                 }
             }
@@ -96,7 +98,7 @@ public class CurrencyDAO extends EntityDAO {
     public Optional<List<Currency>> getAllCurrency() {
         String getAllCurrencyCommand = "SELECT * FROM currencies";
 
-        Connection connection = getConnectionPool();
+        Connection connection = getConnection();
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(getAllCurrencyCommand);
@@ -112,10 +114,10 @@ public class CurrencyDAO extends EntityDAO {
                             resultSet.getString("fullName"),
                             resultSet.getString("sign")));
                 }
-                getPool().releaseConnection(connection);
+                dialOut(connection, statement);
                 return Optional.of(currencyList);
             } else {
-                getPool().releaseConnection(connection);
+                dialOut(connection, statement);
                 return Optional.empty();
             }
         } catch (SQLException e) {
@@ -126,7 +128,7 @@ public class CurrencyDAO extends EntityDAO {
     public void insertCurrency(String code, String name, String sign) {
         String insertCurrencyCommand = "INSERT INTO currencies (code, fullName, sign) VALUES (?, ?, ?)";
 
-        Connection connection = getConnectionPool();
+        Connection connection = getConnection();
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(insertCurrencyCommand);
@@ -136,7 +138,7 @@ public class CurrencyDAO extends EntityDAO {
             statement.setString(3, sign);
             statement.executeUpdate();
 
-            getPool().releaseConnection(connection);
+            dialOut(connection, statement);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -177,7 +179,7 @@ public class CurrencyDAO extends EntityDAO {
     public Optional<Currency> getCurrencyById(Integer id) {
         String getByIdCommand = "SELECT * FROM currencies WHERE ID = ?";
 
-        Connection connection = getConnectionPool();
+        Connection connection = getConnection();
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(getByIdCommand);
@@ -193,10 +195,11 @@ public class CurrencyDAO extends EntityDAO {
                             resultSet.getString("code"),
                             resultSet.getString("fullName"),
                             resultSet.getString("sign"));
-                    getPool().releaseConnection(connection);
+
+                    dialOut(connection, statement);
                     return Optional.of(currency);
                 } else {
-                    getPool().releaseConnection(connection);
+                    dialOut(connection, statement);
                     return Optional.empty();
                 }
             }
@@ -206,6 +209,11 @@ public class CurrencyDAO extends EntityDAO {
         }
 //        getPool().releaseConnection(connection);
         return Optional.empty();
+    }
+
+    private void dialOut(Connection connection, PreparedStatement statement) throws SQLException {
+        statement.close();
+        getPool().releaseConnection(connection);
     }
 
 //    public Optional<List<Currency>> getAllById(int b, int t) {

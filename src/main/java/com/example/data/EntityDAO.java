@@ -7,7 +7,7 @@ public class EntityDAO {
 
     private ConnectionPool connectionPool;
 
-    public Connection getConnectionPool() {
+    public Connection getConnection() {
         try {
             return connectionPool.getConnection();
         } catch (SQLException e) {

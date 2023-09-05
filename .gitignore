@@ -8,11 +8,13 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/*
 *.iws
 *.iml
 *.ipr
 /apache-tomcat-10.1.11
 /apache-tomcat-8.5.89
+/apache-tomcat*
 
 ### Eclipse ###
 .apt_generated

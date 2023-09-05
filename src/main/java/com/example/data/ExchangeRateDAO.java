@@ -18,7 +18,7 @@ public class ExchangeRateDAO extends EntityDAO {
     public Optional<List<ExchangeRate>> getAllExchangeRates() {
         String getAllExchangeRateCommand = "SELECT * FROM exchangeRates";
 
-        Connection connection = getConnectionPool();
+        Connection connection = getConnection();
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(getAllExchangeRateCommand);
@@ -34,10 +34,10 @@ public class ExchangeRateDAO extends EntityDAO {
                             resultSet.getInt("targetCurrencyId"),
                             resultSet.getBigDecimal("rate")));
                 }
-                getPool().releaseConnection(connection);
+                dialOut(connection, statement);
                 return Optional.of(exchangeRates);
             } else {
-                getPool().releaseConnection(connection);
+                dialOut(connection, statement);
                 return Optional.empty();
             }
 
@@ -53,7 +53,7 @@ public class ExchangeRateDAO extends EntityDAO {
                 "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n" +
                 "WHERE Base.code = ? AND Target.code = ?";
 
-        Connection connection = getConnectionPool();
+        Connection connection = getConnection();
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(getExchangeRateByCodeCommand);
@@ -69,10 +69,10 @@ public class ExchangeRateDAO extends EntityDAO {
                             resultSet.getInt("base"),
                             resultSet.getInt("target"),
                             resultSet.getBigDecimal("rate"));
-                    getPool().releaseConnection(connection);
+                    dialOut(connection, statement);
                     return Optional.of(exchangeRate);
                 } else {
-                    getPool().releaseConnection(connection);
+                    dialOut(connection, statement);
                     return Optional.empty();
                 }
             }
@@ -86,7 +86,7 @@ public class ExchangeRateDAO extends EntityDAO {
     public void insertExchangeRate(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) {
         String insertExchangeCommand = "INSERT INTO exchangeRates (baseCurrencyId, targetCurrencyId, rate) VALUES (?, ?, ?)";
 
-        Connection connection = getConnectionPool();
+        Connection connection = getConnection();
         PreparedStatement statement;
         try {
             statement = connection.prepareStatement(insertExchangeCommand);
@@ -96,9 +96,14 @@ public class ExchangeRateDAO extends EntityDAO {
             statement.setBigDecimal(3, rate);
             statement.executeUpdate();
 
-            getPool().releaseConnection(connection);
+            dialOut(connection, statement);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void dialOut(Connection connection, PreparedStatement statement) throws SQLException {
+        statement.close();
+        getPool().releaseConnection(connection);
     }
 }

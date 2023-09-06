@@ -35,6 +35,8 @@ public class ExchangeRateByCodeServlet extends RequestValidation {
 
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        patchExchangeRate(request, response);
+
 //        String empty = "";
 //        String rate = request.getParameter("rate");
 //

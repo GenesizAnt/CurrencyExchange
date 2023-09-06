@@ -1,5 +1,6 @@
 package com.example.data;
 
+import com.example.dto.ExchangeRateDTO;
 import com.example.entity.ExchangeRate;
 
 import java.math.BigDecimal;
@@ -96,6 +97,26 @@ public class ExchangeRateDAO extends EntityDAO {
             statement.setBigDecimal(3, rate);
             statement.executeUpdate();
 
+            dialOut(connection, statement);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void patchExchangeRate(ExchangeRateDTO exchangeRateDTO, BigDecimal rate) {
+
+        String getByCodeCommand = "UPDATE exchangeRates SET rate = ? WHERE BaseCurrencyId = ? AND TargetCurrencyId = ?";
+
+
+        Connection connection = getConnection();
+        PreparedStatement statement;
+        try {
+            statement = connection.prepareStatement(getByCodeCommand);
+
+            statement.setBigDecimal(1, rate);
+            statement.setInt(2, exchangeRateDTO.getBaseCurrency().getId());
+            statement.setInt(3, exchangeRateDTO.getTargetCurrency().getId());
+
+            statement.executeUpdate();
             dialOut(connection, statement);
         } catch (SQLException e) {
             throw new RuntimeException(e);

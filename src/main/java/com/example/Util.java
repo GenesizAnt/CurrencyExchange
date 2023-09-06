@@ -1,6 +1,5 @@
 package com.example;
 
-import com.example.error.CurrencyNotFoundException;
 import com.example.error.ValidationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -63,7 +62,7 @@ public class Util {
         }
     }
 
-    public static Map<String, String> checkRequestParameterForExchangeRate(HttpServletRequest request) throws ValidationException {
+    public static Map<String, String> checkRequestParameterForSaveExchangeRate(HttpServletRequest request) throws ValidationException {
         String empty = "";
         String baseCurrencyCode = request.getParameter("baseCurrencyCode");
         String targetCurrencyCode = request.getParameter("targetCurrencyCode");
@@ -76,11 +75,27 @@ public class Util {
                 targetCurrencyCode.matches("\\d+") || !(targetCurrencyCode.matches("[a-zA-Z]+"))) {
             throw new ValidationException("Target currency code" + targetCurrencyCode + " is empty or incorrect - 400");
         } else if (rate.equals(empty) || !(rate.matches("^\\d+\\.\\d{1,6}$")) || rate.matches("[a-zA-Zа-яА-Я]+")) {
-            throw new ValidationException("Rate exchange" + rate + " is empty or incorrect - 400");
+            throw new ValidationException("Rate exchange " + rate + " is empty or incorrect - 400");
         } else {
             return Map.ofEntries(
                     entry("baseCurrencyCode", baseCurrencyCode),
                     entry("targetCurrencyCode", targetCurrencyCode),
+                    entry("rate", rate));
+        }
+    }
+
+    public static Map<String, String> checkRequestParameterForPatchExchangeRate(HttpServletRequest request) throws ValidationException {
+        String empty = "";
+        String rate = request.getParameter("rate");
+
+        if (!isCorrectCodeExchangeRate(request)) {
+            throw new ValidationException("Code exchange rate is empty or incorrect - 400");
+        } else if (rate.equals(empty) || !(rate.matches("\\d*[.]?\\d{1,6}\\b")) && !(rate.matches("[a-zA-Zа-яА-Я]+"))) {
+            throw new ValidationException("Rate exchange " + rate + " is empty or incorrect - 400");
+        } else {
+            String exchangeRateCode = getCodeFromURL(request);
+            return Map.ofEntries(
+                    entry("exchangeRate", exchangeRateCode),
                     entry("rate", rate));
         }
     }
@@ -102,7 +117,7 @@ public class Util {
         }
     }
 
-    public static boolean isCorrectCodeExchangeRate(HttpServletRequest request) throws ValidationException {
+    public static boolean isCorrectCodeExchangeRate(HttpServletRequest request) throws ValidationException { //ToDo кажется нужно переименовать и нужен ли он вообще?
         String[] splitURL = getSplitURL(request);
         try {
             if (isCorrectCode(splitURL, CORRECT_COUNT_LETTER_EXCHANGE_RATE_NAME)) {

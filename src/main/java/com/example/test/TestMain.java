@@ -1,11 +1,26 @@
 package com.example.test;
 
 import com.example.entity.Currency;
+import com.example.error.ValidationException;
+
 import java.sql.SQLException;
 
 
 public class TestMain {
     public static void main(String[] args) throws SQLException {
+
+        String empty = "";
+        String rate = "91.3544455";
+
+        if (!(rate.equals(empty))) {
+            if (rate.matches("\\d*[.]?\\d{1,6}\\b")) {
+                if (!(rate.matches("[a-zA-Zа-яА-Я]+"))) {
+                    System.out.println();
+                }
+            }
+        }
+
+
 //        ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAO();
 //        ConnectionPool connectionPool = CurrencyBDConnectionPool.create();
 //        exchangeRateDAO.setConnectionPool(connectionPool);
@@ -33,10 +48,6 @@ public class TestMain {
 
     }
 }
-
-
-
-
 
 
 //        ExchangeRateDAO exchangeRateDAO = new ExchangeRateDAO();

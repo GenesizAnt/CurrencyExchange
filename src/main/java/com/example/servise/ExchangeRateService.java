@@ -68,7 +68,7 @@ public class ExchangeRateService {
             exchangeRateDAO.insertExchangeRate(exchangeRateDTO.getBaseCurrency().getId(),
                                                exchangeRateDTO.getTargetCurrency().getId(),
                                                exchangeRateDTO.getRate());
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Database is unavailable - 500");
         }
     }
@@ -83,6 +83,14 @@ public class ExchangeRateService {
                                                                      saveExchangeRateDTO.getBaseCurrency().getCode(),
                                                                      saveExchangeRateDTO.getTargetCurrency().getCode());
         return exchangeRate.isPresent();
+    }
+
+    public void patchExchangeRate(ExchangeRateDTO exchangeRateDTO, BigDecimal rate) {
+        try {
+            exchangeRateDAO.patchExchangeRate(exchangeRateDTO, rate);
+        } catch (Exception e) {
+            throw new RuntimeException("Database is unavailable - 500");
+        }
     }
 
 //    public void insertExchangeRate(Optional<ExchangeRateDTO> exchangeRateDTO) {

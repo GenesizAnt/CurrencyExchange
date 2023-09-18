@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.data.ExchangeTransaction;
 import com.example.dto.ExchangeRateDTO;
 import com.example.error.*;
 import com.example.dto.CurrencyDTO;
@@ -106,15 +107,18 @@ public class RequestValidation extends HttpServlet {
             String exchangeRateCode = getCodeFromURL(request);
             String[] currenciesForExchange = getCurrenciesForExchange(exchangeRateCode);
             try {
+
                 Optional<ExchangeRateDTO> exchangeRateDTO = exchangeRateService.getExchangeRateByCode(currenciesForExchange[0],
                         currenciesForExchange[1]);
 
-                getJsonResponse(response, 200, exchangeRateDTO.get());
+                if (exchangeRateDTO.isPresent()) {
+                    getJsonResponse(response, 200, exchangeRateDTO.get());
+                } else {
+                    getJsonResponse(response, 404, new ExchangeRateNotFoundException("Exchange transaction rate not found - 404"));
+                }
 
             } catch (DatabaseException e) {
                 getJsonResponse(response, 500, e.getMessage());
-            } catch (ExchangeRateNotFoundException e) {
-                getJsonResponse(response, 404, e.getMessage());
             }
         } catch (ValidationException e) {
             getJsonResponse(response, 400, e.getMessage());
@@ -139,12 +143,14 @@ public class RequestValidation extends HttpServlet {
                             saveExchangeRateDTO.get().getBaseCurrency().getCode(),
                             saveExchangeRateDTO.get().getTargetCurrency().getCode());
 
-                    getJsonResponse(response, 200, checkExchangeRateDTO.get());
+                    if (checkExchangeRateDTO.isPresent()) {
+                        getJsonResponse(response, 200, checkExchangeRateDTO.get());
+                    } else {
+                        getJsonResponse(response, 404, new ExchangeRateNotFoundException("Exchange transaction rate not found - 404"));
+                    }
 
                 } catch (DatabaseException e) {
                     getJsonResponse(response, 500, e.getMessage());
-                } catch (ExchangeRateNotFoundException e) {
-                    getJsonResponse(response, 404, e.getMessage());
                 }
             }
         } catch (ValidationException e) {
@@ -164,66 +170,65 @@ public class RequestValidation extends HttpServlet {
             exchangeRateService.patchExchangeRate(exchangeRateDTO.get(), new BigDecimal(requestParameter.get("rate")));
 
             try {
-                Optional<ExchangeRateDTO> checkExchangeRateDTO = exchangeRateService.getExchangeRateByCode(
-                                                                                                currenciesForExchange[0],
-                                                                                                currenciesForExchange[1]);
 
-                getJsonResponse(response, 200, checkExchangeRateDTO.get());
+                Optional<ExchangeRateDTO> checkExchangeRateDTO = exchangeRateService.getExchangeRateByCode(
+                        currenciesForExchange[0],
+                        currenciesForExchange[1]);
+
+                if (checkExchangeRateDTO.isPresent()) {
+                    getJsonResponse(response, 200, checkExchangeRateDTO.get());
+                } else {
+                    getJsonResponse(response, 404, new ExchangeRateNotFoundException("Exchange transaction rate not found - 404"));
+                }
+
             } catch (DatabaseException e) {
                 getJsonResponse(response, 500, e.getMessage());
-            } catch (ExchangeRateNotFoundException e) {
-                getJsonResponse(response, 404, e.getMessage());
             }
         } catch (ValidationException e) {
             getJsonResponse(response, 400, e.getMessage());
-        } catch (ExchangeRateNotFoundException e) {
-            getJsonResponse(response, 404, e.getMessage());
         }
     }
 
+    public void getExchangeTransaction(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        try {
 
+            Map<String, String> requestParameter = checkRequestParameterForExchangeTransaction(request);
 
-//    public void getExchangeTransaction(String baseCurrency, String targetCurrency, String amount, HttpServletResponse response) throws IOException {
-//
-//        double AmountForExchange = Double.parseDouble(amount);
-//        ExchangeRate exchangeDirectRate;
-//        ExchangeRate exchangeReverseRate;
-//        ArrayList<ExchangeRate> exchangesThroughUSDRate;
-//
-//        try {
-//            exchangeDirectRate = currencyDAO.getExchangeRateByCode(baseCurrency, targetCurrency);
-//            exchangeReverseRate = currencyDAO.getExchangeRateByCode(targetCurrency, baseCurrency);
-//            exchangesThroughUSDRate = currencyDAO.getExchangeThroughTransaction(baseCurrency, targetCurrency);
-//        } catch (Exception e) {
-//            response.setStatus(500);
-//            errorQuery = new ErrorQuery("Database is unavailable - 500");
-//            getJsonResponse(errorQuery, response);
-//            throw new RuntimeException(e);
-//        }
-//
-//        if (!(exchangeDirectRate == null)) {
-//            ExchangeTransaction exchangeTransaction = new ExchangeTransaction(exchangeDirectRate);
-//            exchangeTransaction.calculateExchangeTransaction(AmountForExchange);
-//            response.setStatus(200);
-//            getJsonResponse(exchangeTransaction, response);
-//        } else if (!(exchangeReverseRate == null)) {
-//            ExchangeTransaction exchangeTransaction = new ExchangeTransaction(exchangeReverseRate);
-//            exchangeTransaction.calculateReverseExchangeTransaction(AmountForExchange);
-//            response.setStatus(200);
-//            getJsonResponse(exchangeTransaction, response);
-//        } else if (!(exchangesThroughUSDRate == null)) {
-//            Currency base = currencyDAO.getCurrencyByCode(baseCurrency);
-//            Currency target = currencyDAO.getCurrencyByCode(targetCurrency);
-//            ExchangeTransaction exchangeTransaction = new ExchangeTransaction(base, target);
-//            exchangeTransaction.calculateExchangeTransactionThroughUSD(AmountForExchange, exchangesThroughUSDRate);
-//            response.setStatus(200);
-//            getJsonResponse(exchangeTransaction, response);
-//        } else {
-//            response.setStatus(404);
-//            errorQuery = new ErrorQuery("Exchange transaction rate not found - 404");
-//            getJsonResponse(errorQuery, response);
-//        }
-//    }
+            BigDecimal amountForExchange = BigDecimal.valueOf(Long.parseLong(requestParameter.get("amount")));
+            Optional<ExchangeRateDTO> exchangeDirectRate;
+            Optional<ExchangeRateDTO> exchangeReverseRate;
+            Optional<List<ExchangeRateDTO>> exchangesThroughUSDRate;
 
+            try {
+                exchangeDirectRate = exchangeRateService.getExchangeRateByCode(requestParameter.get("baseCurrencyCode"),
+                        requestParameter.get("targetCurrencyCode"));
+                exchangeReverseRate = exchangeRateService.getExchangeRateByCode(requestParameter.get("targetCurrencyCode"),
+                        requestParameter.get("baseCurrencyCode"));
+                exchangesThroughUSDRate = exchangeRateService.getExchangeThroughTransaction(requestParameter.get("baseCurrencyCode"),
+                        requestParameter.get("targetCurrencyCode"));
+
+                if (exchangeDirectRate.isPresent()) {
+                    ExchangeTransaction exchangeTransaction = new ExchangeTransaction(exchangeDirectRate.get());
+                    exchangeTransaction.calculateExchangeTransaction(amountForExchange);
+                    getJsonResponse(response, 200, exchangeTransaction);
+                } else if (exchangeReverseRate.isPresent()) {
+                    ExchangeTransaction exchangeTransaction = new ExchangeTransaction(exchangeReverseRate.get());
+                    exchangeTransaction.calculateReverseExchangeTransaction(amountForExchange);
+                    getJsonResponse(response, 200, exchangeTransaction);
+                } else if (exchangesThroughUSDRate.isPresent()) {
+                    ExchangeTransaction exchangeTransaction = new ExchangeTransaction();
+                    exchangeTransaction.calculateExchangeTransactionThroughUSD(amountForExchange, exchangesThroughUSDRate);
+                    getJsonResponse(response, 200, exchangeTransaction);
+                } else {
+                    getJsonResponse(response, 404, new ExchangeRateNotFoundException("Exchange transaction rate not found - 404"));
+                }
+
+            } catch (DatabaseException e) {
+                getJsonResponse(response, 500, e.getMessage());
+            }
+        } catch (ValidationException e) {
+            getJsonResponse(response, 400, e.getMessage());
+        }
+    }
 }

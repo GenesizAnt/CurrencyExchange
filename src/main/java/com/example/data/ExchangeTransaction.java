@@ -1,59 +1,94 @@
-//package com.example.data;
-//
-//import com.example.entity.Currency;
-//import com.example.entity.ExchangeRate;
-//
-//import java.util.ArrayList;
-//
-//public class ExchangeTransaction {
-//
-//    private Currency baseCurrency;
-//    private Currency targetCurrency;
-//    private double rate;
-//    private double amount;
-//    private double convertedAmount;
-//
-//    public ExchangeTransaction(Currency baseCurrency, Currency targetCurrency) {
-//        this.baseCurrency = baseCurrency;
-//        this.targetCurrency = targetCurrency;
-//    }
-//
-//    public ExchangeTransaction(ExchangeRate exchangeRates) {
-//        this.baseCurrency = exchangeRates.getBaseCurrency();
-//        this.targetCurrency = exchangeRates.getTargetCurrency();
-//        this.rate = exchangeRates.getRate();
-//    }
-//
-//    public ExchangeTransaction() {
-//
-//    }
-//
-//    public void calculateExchangeTransaction(double amount) {
-//        this.amount = amount;
-//        convertedAmount = amount * rate;
-//    }
-//
-//    public void calculateReverseExchangeTransaction(double amount) {
-//        this.amount = amount;
-//        this.convertedAmount = amount / rate;
-//    }
-//
-//    public void calculateExchangeTransactionThroughUSD(double amount, ArrayList<ExchangeRate> exchangeRatesThroughUSD) {
-//        this.amount = amount;
-//        double ExchangeOnUSD = amount * exchangeRatesThroughUSD.get(0).getRate();
-//        this.convertedAmount = ExchangeOnUSD / exchangeRatesThroughUSD.get(1).getRate();
-//    }
-//
-//
-//    public Currency getBaseCurrency() {
-//        return baseCurrency;
-//    }
-//
-//    public void setBaseCurrency(Currency baseCurrency) {
-//        this.baseCurrency = baseCurrency;
-//    }
-//
-//    public Currency getTargetCurrency() {
+package com.example.data;
+
+import com.example.dto.CurrencyDTO;
+import com.example.dto.ExchangeRateDTO;
+import com.example.entity.Currency;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+public class ExchangeTransaction {
+
+    private CurrencyDTO baseCurrency;
+    private CurrencyDTO targetCurrency;
+    private BigDecimal rate;
+    private BigDecimal amount;
+    private BigDecimal convertedAmount;
+
+    public ExchangeTransaction(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency) {
+        this.baseCurrency = baseCurrency;
+        this.targetCurrency = targetCurrency;
+    }
+
+    public ExchangeTransaction(ExchangeRateDTO exchangeRates) {
+        this.baseCurrency = exchangeRates.getBaseCurrency();
+        this.targetCurrency = exchangeRates.getTargetCurrency();
+        this.rate = exchangeRates.getRate();
+    }
+
+    public ExchangeTransaction() {
+
+    }
+
+    public void calculateExchangeTransaction(BigDecimal amount) {
+        this.amount = amount;
+        convertedAmount = amount.multiply(rate);
+    }
+
+    public void calculateReverseExchangeTransaction(BigDecimal amount) {
+        this.amount = amount;
+        this.convertedAmount = amount.divide(rate);
+    }
+
+    public void calculateExchangeTransactionThroughUSD(BigDecimal amount, Optional<List<ExchangeRateDTO>> exchangeRatesThroughUSD) {
+        this.amount = amount;
+        BigDecimal exchangeOnUSD = amount.multiply(exchangeRatesThroughUSD.get().get(0).getRate());
+        this.convertedAmount = exchangeOnUSD.divide(exchangeRatesThroughUSD.get().get(1).getRate());
+    }
+
+
+    public CurrencyDTO getBaseCurrency() {
+        return baseCurrency;
+    }
+
+    public void setBaseCurrency(CurrencyDTO baseCurrency) {
+        this.baseCurrency = baseCurrency;
+    }
+
+    public CurrencyDTO getTargetCurrency() {
+        return targetCurrency;
+    }
+
+    public void setTargetCurrency(CurrencyDTO targetCurrency) {
+        this.targetCurrency = targetCurrency;
+    }
+
+    public BigDecimal getRate() {
+        return rate;
+    }
+
+    public void setRate(BigDecimal rate) {
+        this.rate = rate;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public BigDecimal getConvertedAmount() {
+        return convertedAmount;
+    }
+
+    public void setConvertedAmount(BigDecimal convertedAmount) {
+        this.convertedAmount = convertedAmount;
+    }
+
+    //    public Currency getTargetCurrency() {
 //        return targetCurrency;
 //    }
 //
@@ -84,5 +119,5 @@
 //    public void setConvertedAmount(double convertedAmount) {
 //        this.convertedAmount = convertedAmount;
 //    }
-//
-//}
+
+}

@@ -84,6 +84,28 @@ public class Util {
         }
     }
 
+    public static Map<String, String> checkRequestParameterForExchangeTransaction(HttpServletRequest request) throws ValidationException {
+        String empty = "";
+        String baseCurrencyCode = request.getParameter("from");
+        String targetCurrencyCode = request.getParameter("to");
+        String amount = request.getParameter("amount");
+
+        if (baseCurrencyCode.equals(empty) || baseCurrencyCode.length() != CORRECT_COUNT_LETTER_CURRENCY_NAME ||
+                baseCurrencyCode.matches("\\d+") || !(baseCurrencyCode.matches("[a-zA-Z]+"))) {
+            throw new ValidationException("Base currency code" + baseCurrencyCode + " is empty or incorrect - 400");
+        } else if (targetCurrencyCode.equals(empty) || targetCurrencyCode.length() != CORRECT_COUNT_LETTER_CURRENCY_NAME ||
+                targetCurrencyCode.matches("\\d+") || !(targetCurrencyCode.matches("[a-zA-Z]+"))) {
+            throw new ValidationException("Target currency code" + targetCurrencyCode + " is empty or incorrect - 400");
+        } else if (amount.equals(empty) || !(amount.matches("\\d*[.]?\\d{1,2}\\b"))) {
+            throw new ValidationException("Rate exchange " + amount + " is empty or incorrect - 400");
+        } else {
+            return Map.ofEntries(
+                    entry("baseCurrencyCode", baseCurrencyCode),
+                    entry("targetCurrencyCode", targetCurrencyCode),
+                    entry("amount", amount));
+        }
+    }
+
     public static Map<String, String> checkRequestParameterForPatchExchangeRate(HttpServletRequest request) throws ValidationException {
         String empty = "";
         String rate = request.getParameter("rate");

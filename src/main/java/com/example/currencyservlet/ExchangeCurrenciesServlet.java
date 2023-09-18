@@ -1,25 +1,26 @@
-//package com.example.currencyservlet;
-//
-//import com.example.controller.QueriesControl;
-//import com.example.error.ErrorQuery;
-//
-//import jakarta.servlet.ServletException;
-//import jakarta.servlet.annotation.WebServlet;
-//import jakarta.servlet.http.*;
-//import java.io.IOException;
-//
-//import static com.example.Util.CORRECT_COUNT_LETTER_CURRENCY_NAME;
-//import static com.example.Util.getJsonResponse;
-//
-//@WebServlet("/exchange")
-//public class ExchangeCurrenciesServlet extends HttpServlet {
-//
-//    private QueriesControl queriesControl = new QueriesControl();
-//    private ErrorQuery errorQuery;
-//
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//
+package com.example.currencyservlet;
+
+import com.example.controller.RequestValidation;
+import com.example.error.ErrorQuery;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+
+import static com.example.Util.CORRECT_COUNT_LETTER_CURRENCY_NAME;
+import static com.example.Util.getJsonResponse;
+
+@WebServlet("/exchange")
+public class ExchangeCurrenciesServlet extends RequestValidation {
+
+    private ErrorQuery errorQuery;
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        getExchangeTransaction(request, response);
+
 //        String empty = "";
 //
 //        String baseCurrency = request.getParameter("from");
@@ -45,10 +46,10 @@
 //            queriesControl.getExchangeTransaction(baseCurrency, targetCurrency, amount, response);
 //
 //        }
-//    }
-//
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//
-//    }
-//}
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    }
+}

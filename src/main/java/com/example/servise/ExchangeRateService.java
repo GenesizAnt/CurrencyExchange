@@ -25,7 +25,7 @@ public class ExchangeRateService {
         this.exchangeRateMapper = new ExchangeRateMapper();
     }
 
-    public Optional<List<ExchangeRateDTO>> getAllExchangeRates() throws ExchangeRateNotFoundException {
+    public Optional<List<ExchangeRateDTO>> getAllExchangeRates() {
 //        Optional<List<ExchangeRate>> exchangeRateList = currencyDbDAO.getAllExchangeRates();
 //        List<ExchangeRateDTO> exchangeRateDTOList = exchangeRateMapper.toDtoList(exchangeRateList.get());
 //        return Optional.of(exchangeRateDTOList);
@@ -36,16 +36,15 @@ public class ExchangeRateService {
                 List<ExchangeRateDTO> exchangeRateDTOList = exchangeRateMapper.toDtoList(exchangeRateList.get());
                 return Optional.of(exchangeRateDTOList);
             } else {
-                throw new ExchangeRateNotFoundException("ExchangeRate not found - 404");
+                return Optional.empty();
+//                throw new ExchangeRateNotFoundException("ExchangeRate not found - 404");
             }
-        } catch (ExchangeRateNotFoundException e) {
-            throw new ExchangeRateNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new DatabaseException("Database is unavailable - 500");
         }
     }
 
-    public Optional<ExchangeRateDTO> getExchangeRateByCode(String baseCurrencyCode, String targetCurrencyCode) throws ExchangeRateNotFoundException {
+    public Optional<ExchangeRateDTO> getExchangeRateByCode(String baseCurrencyCode, String targetCurrencyCode) {
 
         try {
             Optional<ExchangeRate> exchangeRate = exchangeRateDAO.getExchangeRateCode(baseCurrencyCode, targetCurrencyCode);
@@ -53,10 +52,9 @@ public class ExchangeRateService {
                 ExchangeRateDTO exchangeRateDTO = exchangeRateMapper.toDto(exchangeRate.get());
                 return Optional.ofNullable(exchangeRateDTO);
             } else {
-                throw new ExchangeRateNotFoundException("ExchangeRate not found - 404");
+                return Optional.empty();
+//                throw new ExchangeRateNotFoundException("ExchangeRate not found - 404");
             }
-        } catch (ExchangeRateNotFoundException e) {
-            throw new ExchangeRateNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new DatabaseException("Database is unavailable - 500");
         }
@@ -93,7 +91,20 @@ public class ExchangeRateService {
         }
     }
 
-//    public void insertExchangeRate(Optional<ExchangeRateDTO> exchangeRateDTO) {
-//
-//    }
+    public Optional<List<ExchangeRateDTO>> getExchangeThroughTransaction(String baseCurrencyCode, String targetCurrencyCode) {
+        try {
+
+            Optional<List<ExchangeRate>> exchangesThroughUSDRate = exchangeRateDAO.getExchangeThroughTransaction(baseCurrencyCode, targetCurrencyCode);
+
+            if (exchangesThroughUSDRate.isPresent()) {
+                List<ExchangeRateDTO> exchangeRateDTOList = exchangeRateMapper.toDtoList(exchangesThroughUSDRate.get());
+                return Optional.of(exchangeRateDTOList);
+            } else {
+                return Optional.empty();
+            }
+
+        } catch (Exception e) {
+            throw new DatabaseException("Database is unavailable - 500");
+        }
+    }
 }

@@ -96,21 +96,6 @@ public class ExchangeRateDAO extends EntityDAO {
     public Optional<List<ExchangeRate>> getAllExchangeRates() {
         String getAllExchangeRateCommand = "SELECT * FROM exchangeRates";
 
-        return getExchangeRates(getAllExchangeRateCommand);
-    }
-
-    public Optional<List<ExchangeRate>> getExchangeThroughTransaction(String baseCurrencyCode, String targetCurrencyCode) {
-
-        String getAllExchangeRateCommand = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
-                "FROM exchangeRates\n" +
-                "INNER JOIN currencies base ON exchangeRates.BaseCurrencyId = base.ID\n" +
-                "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n" +
-                "WHERE Base='USD' AND Target = ? OR Base='USD' AND Target = ?";
-
-        return getExchangeRates(getAllExchangeRateCommand);
-    }
-
-    private Optional<List<ExchangeRate>> getExchangeRates(String getAllExchangeRateCommand) {
         Connection connection = getConnection();
         PreparedStatement statement;
         try {
@@ -125,6 +110,44 @@ public class ExchangeRateDAO extends EntityDAO {
                             resultSet.getInt("id"),
                             resultSet.getInt("baseCurrencyId"),
                             resultSet.getInt("targetCurrencyId"),
+                            resultSet.getBigDecimal("rate")));
+                }
+                dialOut(connection, statement);
+                return Optional.of(exchangeRates);
+            } else {
+                dialOut(connection, statement);
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Optional<List<ExchangeRate>> getExchangeThroughTransaction(int baseCurrencyCode, int targetCurrencyCode) {
+
+        String getAllExchangeRateCommand = "SELECT exchangeRates.id, base.ID AS Base, target.ID AS Target, exchangeRates.rate\n" +
+                "FROM exchangeRates\n" +
+                "INNER JOIN currencies base ON exchangeRates.BaseCurrencyId = base.ID\n" +
+                "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n" +
+                "WHERE Base = '3' AND Target = ? OR Base = '3' AND Target = ?";
+
+        Connection connection = getConnection();
+        PreparedStatement statement;
+        try {
+            statement = connection.prepareStatement(getAllExchangeRateCommand);
+
+            statement.setInt(1, baseCurrencyCode);
+            statement.setInt(2, targetCurrencyCode);
+
+            statement.execute();
+            ResultSet resultSet = statement.getResultSet();
+            if (resultSet.isBeforeFirst()) {
+                List<ExchangeRate> exchangeRates = new ArrayList<>();
+                while (resultSet.next()) {
+                    exchangeRates.add(new ExchangeRate(
+                            resultSet.getInt("id"),
+                            resultSet.getInt("base"),
+                            resultSet.getInt("target"),
                             resultSet.getBigDecimal("rate")));
                 }
                 dialOut(connection, statement);

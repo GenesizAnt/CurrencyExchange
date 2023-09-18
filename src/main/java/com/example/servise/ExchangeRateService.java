@@ -6,7 +6,6 @@ import com.example.data.ExchangeRateDAO;
 import com.example.dto.ExchangeRateDTO;
 import com.example.entity.ExchangeRate;
 import com.example.error.DatabaseException;
-import com.example.error.ExchangeRateNotFoundException;
 import com.example.test.ExchangeRateMapper;
 
 import java.math.BigDecimal;
@@ -91,8 +90,9 @@ public class ExchangeRateService {
         }
     }
 
-    public Optional<List<ExchangeRateDTO>> getExchangeThroughTransaction(String baseCurrencyCode, String targetCurrencyCode) {
+    public Optional<List<ExchangeRateDTO>> getExchangeThroughTransaction(int baseCurrencyCode, int targetCurrencyCode) {
         try {
+
 
             Optional<List<ExchangeRate>> exchangesThroughUSDRate = exchangeRateDAO.getExchangeThroughTransaction(baseCurrencyCode, targetCurrencyCode);
 

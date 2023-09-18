@@ -5,6 +5,7 @@ import com.example.dto.ExchangeRateDTO;
 import com.example.entity.Currency;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,9 +17,10 @@ public class ExchangeTransaction {
     private BigDecimal amount;
     private BigDecimal convertedAmount;
 
-    public ExchangeTransaction(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency) {
+    public ExchangeTransaction(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, BigDecimal rate) {
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
+        this.rate = rate;
     }
 
     public ExchangeTransaction(ExchangeRateDTO exchangeRates) {
@@ -33,18 +35,18 @@ public class ExchangeTransaction {
 
     public void calculateExchangeTransaction(BigDecimal amount) {
         this.amount = amount;
-        convertedAmount = amount.multiply(rate);
+        convertedAmount = amount.multiply(rate).setScale(2, RoundingMode.HALF_DOWN);
     }
 
     public void calculateReverseExchangeTransaction(BigDecimal amount) {
         this.amount = amount;
-        this.convertedAmount = amount.divide(rate);
+        this.convertedAmount = amount.divide(rate,2, RoundingMode.HALF_DOWN);
     }
 
     public void calculateExchangeTransactionThroughUSD(BigDecimal amount, Optional<List<ExchangeRateDTO>> exchangeRatesThroughUSD) {
         this.amount = amount;
-        BigDecimal exchangeOnUSD = amount.multiply(exchangeRatesThroughUSD.get().get(0).getRate());
-        this.convertedAmount = exchangeOnUSD.divide(exchangeRatesThroughUSD.get().get(1).getRate());
+        BigDecimal exchangeOnUSD = amount.multiply(exchangeRatesThroughUSD.get().get(0).getRate()).setScale(2, RoundingMode.HALF_DOWN);
+        this.convertedAmount = exchangeOnUSD.divide(exchangeRatesThroughUSD.get().get(1).getRate(), 2, RoundingMode.HALF_DOWN);
     }
 
 

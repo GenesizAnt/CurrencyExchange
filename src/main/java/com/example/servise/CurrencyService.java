@@ -23,17 +23,16 @@ public class CurrencyService {
 //        this.exchangeRateMapper = new ExchangeRateMapper();
     }
 
-    public Optional<CurrencyDTO> getCurrencyByCode(String code) throws CurrencyNotFoundException {
+    public Optional<CurrencyDTO> getCurrencyByCode(String code) {
         try {
             Optional<Currency> currency = currencyDAO.getCurrencyByCode(code);
             if (currency.isPresent()) {
                 CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
                 return Optional.ofNullable(currencyDTO);
             } else {
-                throw new CurrencyNotFoundException("Currency not found - 404");
+                return Optional.empty();
+//                throw new CurrencyNotFoundException("Currency not found - 404");
             }
-        } catch (CurrencyNotFoundException e) {
-            throw new CurrencyNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new DatabaseException("Database is unavailable - 500");
         }
@@ -50,7 +49,7 @@ public class CurrencyService {
 //        return Optional.empty();
 //    }
 
-    public Optional<List<CurrencyDTO>> getAllCurrency() throws CurrencyNotFoundException {
+    public Optional<List<CurrencyDTO>> getAllCurrency() {
 //        Optional<List<Currency>> currencyList = currencyDAO.getAllCurrency();
 //        if (currencyList.isPresent()) {
 //            List<CurrencyDTO> currencyDTOList = currencyMapper.toDtoList(currencyList.get());
@@ -65,11 +64,9 @@ public class CurrencyService {
                 List<CurrencyDTO> currencyDTOList = currencyMapper.toDtoList(currencyList.get());
                 return Optional.of(currencyDTOList);
             } else {
-//                return Optional.empty();
-                throw new CurrencyNotFoundException("Currency not found - 404");
+                return Optional.empty();
+//                throw new CurrencyNotFoundException("Currency not found - 404");
             }
-        } catch (CurrencyNotFoundException e) {
-            throw new CurrencyNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new DatabaseException("Database is unavailable - 500");
         }
@@ -79,13 +76,14 @@ public class CurrencyService {
         try {
             currencyDAO.insertCurrency(code, name, sign);
         } catch (DatabaseException e) {
-            throw new DatabaseException("Currency with this code already exists - 409");
+            throw new DatabaseException(e.getMessage());
+//            throw new DatabaseException("Currency with this code already exists - 409");
         } catch (RuntimeException e) {
             throw new RuntimeException("Database is unavailable - 500");
         }
     }
 
-    public Optional<CurrencyDTO> getCurrencyById(Integer id) throws CurrencyNotFoundException {
+    public Optional<CurrencyDTO> getCurrencyById(Integer id) {
 //        Optional<Currency> currency = currencyDbDAO.getCurrencyById(id);
 //        CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
 //        return Optional.ofNullable(currencyDTO);
@@ -96,10 +94,9 @@ public class CurrencyService {
                 CurrencyDTO currencyDTO = currencyMapper.toDto(currency);
                 return Optional.ofNullable(currencyDTO);
             } else {
-                throw new CurrencyNotFoundException("Currency not found - 404");
+                return Optional.empty();
+//                throw new CurrencyNotFoundException("Currency not found - 404");
             }
-        } catch (CurrencyNotFoundException e) {
-            throw new CurrencyNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new DatabaseException("Database is unavailable - 500");
         }

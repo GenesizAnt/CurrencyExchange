@@ -22,12 +22,6 @@ import static com.example.Util.*;
 
 public class RequestValidation extends HttpServlet {
 
-    //ToDo Перед вставкой валюты в базу ты вручную проверяешь её существование, лучше положиться на UNIQUE индекс для колонки с кодом валюты
-    //ToDo В гит репозитории не следует класть папки с Tomcat
-    //ToDo создать ДТО и оправлять его на отдельную валидацию
-    //ToDo ModelMapper что это для ДТО? Если нужно будет превращать одну дто в другую похожую, почитай про ModelMapper
-    //ToDo Optional что это и как заменить НУЛЛ?
-
     //    CurrencyDAO currencyDAO = new CurrencyDAO();
     private CurrencyService currencyService = new CurrencyService();
     private ErrorQuery errorQuery;
@@ -41,10 +35,14 @@ public class RequestValidation extends HttpServlet {
             isCorrectCodeCurrency(request);
             String currencyCode = getCodeFromURL(request);
             try {
+
                 Optional<CurrencyDTO> currencyDTO = currencyService.getCurrencyByCode(currencyCode);
-                getJsonResponse(response, 200, currencyDTO.get());
-            } catch (CurrencyNotFoundException e) {
-                getJsonResponse(response, 404, e.getMessage());
+
+                if (currencyDTO.isPresent()) {
+                    getJsonResponse(response, 200, currencyDTO.get());
+                } else {
+                    getJsonResponse(response, 404, new ExchangeRateNotFoundException("Currency not found - 404").getMessage());
+                }
             } catch (DatabaseException e) {
                 getJsonResponse(response, 500, e.getMessage());
             }
@@ -56,9 +54,11 @@ public class RequestValidation extends HttpServlet {
     public void getAllCurrency(HttpServletResponse response) throws IOException {
         try {
             Optional<List<CurrencyDTO>> allCurrency = currencyService.getAllCurrency();
-            getJsonResponse(response, 200, allCurrency.get());
-        } catch (CurrencyNotFoundException e) {
-            getJsonResponse(response, 404, e.getMessage());
+            if (allCurrency.isPresent()) {
+                getJsonResponse(response, 200, allCurrency.get());
+            } else {
+                getJsonResponse(response, 404, new ExchangeRateNotFoundException("Currency not found - 404").getMessage());
+            }
         } catch (DatabaseException e) {
             getJsonResponse(response, 500, e.getMessage());
         }
@@ -75,14 +75,16 @@ public class RequestValidation extends HttpServlet {
                         requestParameter.get("sign"));
 
                 Optional<CurrencyDTO> currencyDTO = currencyService.getCurrencyByCode(requestParameter.get("code"));
-                getJsonResponse(response, 200, currencyDTO.get());
+                if (currencyDTO.isPresent()) {
+                    getJsonResponse(response, 200, currencyDTO.get());
+                } else {
+                    getJsonResponse(response, 404, new ExchangeRateNotFoundException("Currency not found - 404").getMessage());
+                }
 
             } catch (DatabaseException e) {
                 getJsonResponse(response, 409, e.getMessage());
             } catch (RuntimeException e) {
                 getJsonResponse(response, 500, e.getMessage());
-            } catch (CurrencyNotFoundException e) {
-                getJsonResponse(response, 404, e.getMessage());
             }
         } catch (ValidationException e) {
             getJsonResponse(response, 400, e.getMessage());
@@ -241,8 +243,6 @@ public class RequestValidation extends HttpServlet {
             }
         } catch (ValidationException e) {
             getJsonResponse(response, 400, e.getMessage());
-        } catch (CurrencyNotFoundException e) {
-            getJsonResponse(response, 404, e.getMessage());
         }
     }
 }

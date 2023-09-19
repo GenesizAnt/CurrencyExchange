@@ -1,6 +1,8 @@
 package com.example.data;
 
 import com.example.entity.Currency;
+import com.example.error.DatabaseException;
+import org.sqlite.SQLiteErrorCode;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -140,7 +142,15 @@ public class CurrencyDAO extends EntityDAO {
 
             dialOut(connection, statement);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+
+            if (e.getErrorCode() == SQLiteErrorCode.SQLITE_CONSTRAINT.code && e.getMessage().contains("UNIQUE constraint failed")) {
+                throw new DatabaseException("Currency with this code already exists - 409");
+            } else {
+                throw new RuntimeException(e);
+            }
+
+
+//            throw new RuntimeException(e);
         }
     }
 

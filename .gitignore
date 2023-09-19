@@ -4,11 +4,13 @@ target/
 !**/src/test/**/target/
 
 ### IntelliJ IDEA ###
+/apache-tomcat-8.5.89/
+/.idea/
 .idea/*
 *.iws
 *.iml
 *.ipr
-/apache-tomcat*
+
 
 ### Eclipse ###
 .apt_generated

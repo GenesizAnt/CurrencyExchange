@@ -139,7 +139,7 @@ public class Util {
         }
     }
 
-    public static boolean isCorrectCodeExchangeRate(HttpServletRequest request) throws ValidationException { //ToDo кажется нужно переименовать и нужен ли он вообще?
+    public static boolean isCorrectCodeExchangeRate(HttpServletRequest request) throws ValidationException {
         String[] splitURL = getSplitURL(request);
         try {
             if (isCorrectCode(splitURL, CORRECT_COUNT_LETTER_EXCHANGE_RATE_NAME)) {

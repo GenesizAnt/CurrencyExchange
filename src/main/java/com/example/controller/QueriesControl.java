@@ -151,11 +151,7 @@
 //    public void postCurrency(String codeCurrency, String nameCurrency, String signCurrency, HttpServletResponse response) throws IOException {
 //
 //        Currency currencyByCode = currencyDAObefore.getCurrencyByCode(codeCurrency);
-//        //ToDo Перед вставкой валюты в базу ты вручную проверяешь её существование, лучше положиться на UNIQUE индекс для колонки с кодом валюты
 //        //ToDo В гит репозитории не следует класть папки с Tomcat
-//        //ToDo https://www.baeldung.com/java-dto-pattern
-//        //ToDo Java. Для чего нужен Optional?
-//        //ToDo Filter изучить
 //
 //        if (!(currencyByCode == null)) {
 //            response.setStatus(409);

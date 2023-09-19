@@ -47,7 +47,7 @@ public class ExchangeRateMapper {
                     CurrencyDTO targetCurrency;
                     try {
                         baseCurrency = currencyService.getCurrencyById(exchangeRate.getBaseCurrency()).get();
-                        targetCurrency = currencyService.getCurrencyById(exchangeRate.getBaseCurrency()).get();
+                        targetCurrency = currencyService.getCurrencyById(exchangeRate.getTargetCurrency()).get();
                     } catch (CurrencyNotFoundException e) {
                         throw new RuntimeException(e);
                     }

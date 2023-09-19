@@ -228,8 +228,9 @@ public class RequestValidation extends HttpServlet {
                     exchangeTransaction.calculateReverseExchangeTransaction(amountForExchange);
                     getJsonResponse(response, 200, exchangeTransaction);
                 } else if (exchangesThroughUSDRate.isPresent()) {
-                    ExchangeTransaction exchangeTransaction = new ExchangeTransaction();
-                    exchangeTransaction.calculateExchangeTransactionThroughUSD(amountForExchange, exchangesThroughUSDRate);
+                    ExchangeTransaction exchangeTransaction = new ExchangeTransaction(exchangesThroughUSDRate.get().get(0),
+                            exchangesThroughUSDRate.get().get(1));
+                    exchangeTransaction.calculateExchangeTransactionThroughUSD(amountForExchange, exchangeTransaction.getRate());
                     getJsonResponse(response, 200, exchangeTransaction);
                 } else {
                     getJsonResponse(response, 404, new ExchangeRateNotFoundException("Exchange transaction rate not found - 404").getMessage());

@@ -2,12 +2,9 @@ package com.example.data;
 
 import com.example.dto.CurrencyDTO;
 import com.example.dto.ExchangeRateDTO;
-import com.example.entity.Currency;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
-import java.util.Optional;
 
 public class ExchangeTransaction {
 
@@ -33,20 +30,26 @@ public class ExchangeTransaction {
 
     }
 
+    public ExchangeTransaction(ExchangeRateDTO baseExchangeRateDTO, ExchangeRateDTO targetExchangeRateDTO) {
+        this.baseCurrency = baseExchangeRateDTO.getTargetCurrency();
+        this.targetCurrency = targetExchangeRateDTO.getTargetCurrency();
+        this.rate = baseExchangeRateDTO.getRate().divide(targetExchangeRateDTO.getRate(),2, RoundingMode.HALF_EVEN);
+    }
+
     public void calculateExchangeTransaction(BigDecimal amount) {
         this.amount = amount;
-        convertedAmount = amount.multiply(rate).setScale(2, RoundingMode.HALF_DOWN);
+        convertedAmount = amount.multiply(rate).setScale(6, RoundingMode.HALF_EVEN);
     }
 
     public void calculateReverseExchangeTransaction(BigDecimal amount) {
         this.amount = amount;
-        this.convertedAmount = amount.divide(rate,2, RoundingMode.HALF_DOWN);
+        this.convertedAmount = amount.divide(rate,6, RoundingMode.HALF_EVEN);
     }
 
-    public void calculateExchangeTransactionThroughUSD(BigDecimal amount, Optional<List<ExchangeRateDTO>> exchangeRatesThroughUSD) {
+    public void calculateExchangeTransactionThroughUSD(BigDecimal amount, BigDecimal rateThroughUSD) {
         this.amount = amount;
-        BigDecimal exchangeOnUSD = amount.multiply(exchangeRatesThroughUSD.get().get(0).getRate()).setScale(2, RoundingMode.HALF_DOWN);
-        this.convertedAmount = exchangeOnUSD.divide(exchangeRatesThroughUSD.get().get(1).getRate(), 2, RoundingMode.HALF_DOWN);
+//        BigDecimal exchangeOnUSD = amount.multiply(exchangeRatesThroughUSD.get().get(0).getRate()).setScale(2, RoundingMode.HALF_EVEN);
+        this.convertedAmount = amount.divide(rateThroughUSD,6, RoundingMode.HALF_EVEN);
     }
 
 

@@ -5,7 +5,9 @@ target/
 
 ### IntelliJ IDEA ###
 /apache-tomcat-8.5.89/
-/.idea/
+/apache-tomcat-10.1.11/
+/.idea/*
+/.idea
 .idea/*
 *.iws
 *.iml

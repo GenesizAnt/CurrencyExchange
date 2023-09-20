@@ -4,16 +4,22 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class CurrencyNotFoundException extends Exception {
 
-    private String errorMessage;
+//    private String errorMessage;
 
-    public CurrencyNotFoundException(String s) {
+    public CurrencyNotFoundException(String message) {
 //        errorMessage = s;
-        super(s);
+        super(message);
     }
 
-    public CurrencyNotFoundException() {
 
-    }
+
+//    public DatabaseException(String message) {
+//        super(message);
+//    }
+
+//    public CurrencyNotFoundException() {
+//
+//    }
 
 //    public void sendError(int codeError, String msgError, HttpServletResponse response) {
 //        response.setStatus(codeError);

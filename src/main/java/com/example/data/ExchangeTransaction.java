@@ -38,18 +38,18 @@ public class ExchangeTransaction {
 
     public void calculateExchangeTransaction(BigDecimal amount) {
         this.amount = amount;
-        convertedAmount = amount.multiply(rate).setScale(6, RoundingMode.HALF_EVEN);
+        convertedAmount = amount.multiply(rate).setScale(2, RoundingMode.HALF_EVEN);
     }
 
     public void calculateReverseExchangeTransaction(BigDecimal amount) {
         this.amount = amount;
-        this.convertedAmount = amount.divide(rate,6, RoundingMode.HALF_EVEN);
+        this.convertedAmount = amount.divide(rate,2, RoundingMode.HALF_EVEN);
     }
 
     public void calculateExchangeTransactionThroughUSD(BigDecimal amount, BigDecimal rateThroughUSD) {
         this.amount = amount;
 //        BigDecimal exchangeOnUSD = amount.multiply(exchangeRatesThroughUSD.get().get(0).getRate()).setScale(2, RoundingMode.HALF_EVEN);
-        this.convertedAmount = amount.divide(rateThroughUSD,6, RoundingMode.HALF_EVEN);
+        this.convertedAmount = amount.divide(rateThroughUSD,2, RoundingMode.HALF_EVEN);
     }
 
 

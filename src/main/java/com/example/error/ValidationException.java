@@ -6,9 +6,9 @@ public class ValidationException extends Exception {
 
     private String errorMessage;
 
-    public ValidationException(String s) {
+    public ValidationException(String message) {
 //        errorMessage = s;
-        super(s);
+        super(message);
     }
 
 //    public void sendError(int codeError, String msgError, HttpServletResponse response) {

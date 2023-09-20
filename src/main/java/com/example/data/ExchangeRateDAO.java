@@ -76,7 +76,6 @@ public class ExchangeRateDAO extends EntityDAO {
 
         String getByCodeCommand = "UPDATE exchangeRates SET rate = ? WHERE BaseCurrencyId = ? AND TargetCurrencyId = ?";
 
-
         Connection connection = getConnection();
         PreparedStatement statement;
         try {

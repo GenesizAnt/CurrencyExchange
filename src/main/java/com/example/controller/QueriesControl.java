@@ -151,7 +151,6 @@
 //    public void postCurrency(String codeCurrency, String nameCurrency, String signCurrency, HttpServletResponse response) throws IOException {
 //
 //        Currency currencyByCode = currencyDAObefore.getCurrencyByCode(codeCurrency);
-//        //ToDo В гит репозитории не следует класть папки с Tomcat
 //
 //        if (!(currencyByCode == null)) {
 //            response.setStatus(409);

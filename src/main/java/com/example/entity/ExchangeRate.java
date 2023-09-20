@@ -5,8 +5,6 @@ import java.util.Optional;
 
 public class ExchangeRate {
 
-    //ToDo проверить написание наименований по ТЗ
-
     private int id;
     private int baseCurrency;
     private int targetCurrency;
@@ -34,9 +32,9 @@ public class ExchangeRate {
 //        this.rate = rate;
 //    }
 
-    public ExchangeRate() {
-
-    }
+//    public ExchangeRate() {
+//
+//    }
 
     public int getId() {
         return id;

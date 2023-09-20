@@ -6,7 +6,7 @@ import com.example.data.ExchangeRateDAO;
 import com.example.dto.ExchangeRateDTO;
 import com.example.entity.ExchangeRate;
 import com.example.error.DatabaseException;
-import com.example.test.ExchangeRateMapper;
+import com.example.dto.ExchangeRateMapper;
 
 import java.math.BigDecimal;
 import java.util.List;

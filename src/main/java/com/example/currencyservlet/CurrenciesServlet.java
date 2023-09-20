@@ -1,7 +1,6 @@
 package com.example.currencyservlet;
 
 import com.example.controller.RequestValidation;
-import com.example.error.ErrorQuery;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,7 +17,7 @@ import static com.example.Util.getJsonResponse;
 public class CurrenciesServlet extends RequestValidation {
 
 //    private QueriesControl queriesControl = new QueriesControl();
-    private ErrorQuery errorQuery;
+//    private ErrorQuery errorQuery;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

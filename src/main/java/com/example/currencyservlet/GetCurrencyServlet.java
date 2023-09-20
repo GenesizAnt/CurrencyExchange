@@ -1,7 +1,6 @@
 package com.example.currencyservlet;
 
 import com.example.controller.RequestValidation;
-import com.example.error.ErrorQuery;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,7 +12,6 @@ import java.io.IOException;
 public class GetCurrencyServlet extends RequestValidation {
 
     //    private QueriesControl queriesControl = new QueriesControl();
-    private ErrorQuery errorQuery;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

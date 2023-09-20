@@ -1,7 +1,6 @@
 package com.example.currencyservlet;
 
 import com.example.controller.RequestValidation;
-import com.example.error.ErrorQuery;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

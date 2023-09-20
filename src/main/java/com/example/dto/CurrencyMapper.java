@@ -1,4 +1,4 @@
-package com.example.test;
+package com.example.dto;
 
 import com.example.dto.CurrencyDTO;
 import com.example.entity.Currency;
@@ -28,7 +28,7 @@ public class CurrencyMapper {
         return mapper.map(currency, CurrencyDTO.class);
     }
 
-    public List<CurrencyDTO> toDtoList(List<Currency> currencies) { //ToDo изучить как работает этот код или придумать другой способ
+    public List<CurrencyDTO> toDtoList(List<Currency> currencies) {
         ModelMapper mapper = getMapper();
         mapper.addMappings(new PropertyMap<Currency, CurrencyDTO>() {
             @Override

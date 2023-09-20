@@ -1,12 +1,10 @@
 package com.example.servise;
 
-import com.example.data.EntityDAO;
-import com.example.error.CurrencyNotFoundException;
 import com.example.dto.CurrencyDTO;
 import com.example.entity.Currency;
 import com.example.error.DatabaseException;
 import com.example.data.CurrencyDAO;
-import com.example.test.CurrencyMapper;
+import com.example.dto.CurrencyMapper;
 
 import java.util.List;
 import java.util.Optional;

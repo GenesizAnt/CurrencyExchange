@@ -24,7 +24,7 @@ public class RequestValidation extends HttpServlet {
 
     //    CurrencyDAO currencyDAO = new CurrencyDAO();
     private CurrencyService currencyService = new CurrencyService();
-    private ErrorQuery errorQuery;
+//    private ErrorQuery errorQuery;
     private ObjectMapper objectMapper = new ObjectMapper();
     private PrintWriter writer;
     private ExchangeRateService exchangeRateService = new ExchangeRateService();
@@ -103,6 +103,7 @@ public class RequestValidation extends HttpServlet {
             getJsonResponse(response, 500, e.getMessage());
         }
     }
+    //ToDo в jsp старт добавить как работать с проектом https://zhukovsd.github.io/java-backend-learning-course/Projects/CurrencyExchange/
 
     public void getExchangeRate(HttpServletRequest request, HttpServletResponse response) throws IOException {
 

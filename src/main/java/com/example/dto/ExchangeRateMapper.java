@@ -1,19 +1,14 @@
 package com.example.dto;
 
-import com.example.dto.CurrencyDTO;
-import com.example.dto.ExchangeRateDTO;
 import com.example.entity.ExchangeRate;
-import com.example.error.CurrencyNotFoundException;
 import com.example.servise.CurrencyService;
 import org.modelmapper.*;
 import org.modelmapper.convention.MatchingStrategies;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.util.Map.entry;
 import static org.modelmapper.config.Configuration.AccessLevel.PRIVATE;
 
 public class ExchangeRateMapper {
@@ -40,33 +35,14 @@ public class ExchangeRateMapper {
         List<ExchangeRateDTO> list = exchangeRates.stream()
                 .map(exchangeRate -> {
                     ExchangeRateDTO exchangeRateDTO = mapper.map(exchangeRate, ExchangeRateDTO.class);
-//                    List<CurrencyDTO> byId = currencyService.getById(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency());
-//                    exchangeRateDTO.setBaseCurrency(byId.get(0));
-//                    exchangeRateDTO.setTargetCurrency(byId.get(1));
                     CurrencyDTO baseCurrency = currencyService.getCurrencyById(exchangeRate.getBaseCurrency()).get();
                     CurrencyDTO targetCurrency = currencyService.getCurrencyById(exchangeRate.getTargetCurrency()).get();
-
                     exchangeRateDTO.setBaseCurrency(baseCurrency);
                     exchangeRateDTO.setTargetCurrency(targetCurrency);
                     return exchangeRateDTO;
                 })
                 .collect(Collectors.toList());
         return list;
-
-//        List<ExchangeRateDTO> list = new ArrayList<>();
-//
-//        for (ExchangeRate exchangeRate : exchangeRates) {
-//            List<CurrencyDTO> byId = currencyService.getById(exchangeRate.getBaseCurrency(), exchangeRate.getTargetCurrency());
-//            list.add(
-//                    new ExchangeRateDTO(
-//                            exchangeRate.getId(),
-//                            byId.get(0),
-//                            byId.get(1),
-//                            exchangeRate.getRate()
-//                    )
-//            );
-//        }
-//        return list;
     }
 
     public ExchangeRateDTO toDto(ExchangeRate exchangeRate) {

@@ -6,13 +6,11 @@ import com.example.error.*;
 import com.example.dto.CurrencyDTO;
 import com.example.servise.CurrencyService;
 import com.example.servise.ExchangeRateService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -22,13 +20,8 @@ import static com.example.Util.*;
 
 public class RequestValidation extends HttpServlet {
 
-    //    CurrencyDAO currencyDAO = new CurrencyDAO();
-    private CurrencyService currencyService = new CurrencyService();
-//    private ErrorQuery errorQuery;
-    private ObjectMapper objectMapper = new ObjectMapper();
-    private PrintWriter writer;
-    private ExchangeRateService exchangeRateService = new ExchangeRateService();
-
+    private final CurrencyService currencyService = new CurrencyService();
+    private final ExchangeRateService exchangeRateService = new ExchangeRateService();
 
     public void getCurrency(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
@@ -104,9 +97,9 @@ public class RequestValidation extends HttpServlet {
         }
     }
     //ToDo в jsp старт добавить как работать с проектом https://zhukovsd.github.io/java-backend-learning-course/Projects/CurrencyExchange/
+    //ToDo выложить коллекцию постман в проект
 
     public void getExchangeRate(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         try {
             isCorrectCodeExchangeRate(request);
             String exchangeRateCode = getCodeFromURL(request);
@@ -131,8 +124,6 @@ public class RequestValidation extends HttpServlet {
     }
 
     public void postExchangeRate(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-
         try {
 
             Map<String, String> requestParameter = checkRequestParameterForSaveExchangeRate(request);
@@ -164,7 +155,6 @@ public class RequestValidation extends HttpServlet {
     }
 
     public void patchExchangeRate(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         try {
 
             Map<String, String> requestParameter = checkRequestParameterForPatchExchangeRate(request);
@@ -199,7 +189,6 @@ public class RequestValidation extends HttpServlet {
     }
 
     public void getExchangeTransaction(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         try {
 
             Map<String, String> requestParameter = checkRequestParameterForExchangeTransaction(request);

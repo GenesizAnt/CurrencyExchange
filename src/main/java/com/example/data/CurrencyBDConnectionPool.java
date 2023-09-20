@@ -9,10 +9,10 @@ import java.util.List;
 public class CurrencyBDConnectionPool implements ConnectionPool {
 
     private static String url = "jdbc:sqlite:Currencies.db";
-    private List connectionPool;
-    private List usedConnections = new ArrayList<>();
-    private static int INITIAL_POOL_SIZE = 5;
-    private static int MAX_POOL_SIZE = 10;
+    private final List connectionPool;
+    private final List usedConnections = new ArrayList<>();
+    private static final int INITIAL_POOL_SIZE = 5;
+    private static final int MAX_POOL_SIZE = 10;
 
     public static CurrencyBDConnectionPool create() throws SQLException {
         List pool = new ArrayList<>(INITIAL_POOL_SIZE);
@@ -67,6 +67,6 @@ public class CurrencyBDConnectionPool implements ConnectionPool {
     }
 
     public void setUrl(String url) {
-        this.url = url;
+        CurrencyBDConnectionPool.url = url;
     }
 }

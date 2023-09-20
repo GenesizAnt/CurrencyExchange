@@ -33,7 +33,7 @@ public class ExchangeTransaction {
     public ExchangeTransaction(ExchangeRateDTO baseExchangeRateDTO, ExchangeRateDTO targetExchangeRateDTO) {
         this.baseCurrency = baseExchangeRateDTO.getTargetCurrency();
         this.targetCurrency = targetExchangeRateDTO.getTargetCurrency();
-        this.rate = baseExchangeRateDTO.getRate().divide(targetExchangeRateDTO.getRate(),2, RoundingMode.HALF_EVEN);
+        this.rate = baseExchangeRateDTO.getRate().divide(targetExchangeRateDTO.getRate(), 2, RoundingMode.HALF_EVEN);
     }
 
     public void calculateExchangeTransaction(BigDecimal amount) {
@@ -43,13 +43,12 @@ public class ExchangeTransaction {
 
     public void calculateReverseExchangeTransaction(BigDecimal amount) {
         this.amount = amount;
-        this.convertedAmount = amount.divide(rate,2, RoundingMode.HALF_EVEN);
+        this.convertedAmount = amount.divide(rate, 2, RoundingMode.HALF_EVEN);
     }
 
     public void calculateExchangeTransactionThroughUSD(BigDecimal amount, BigDecimal rateThroughUSD) {
         this.amount = amount;
-//        BigDecimal exchangeOnUSD = amount.multiply(exchangeRatesThroughUSD.get().get(0).getRate()).setScale(2, RoundingMode.HALF_EVEN);
-        this.convertedAmount = amount.divide(rateThroughUSD,2, RoundingMode.HALF_EVEN);
+        this.convertedAmount = amount.divide(rateThroughUSD, 2, RoundingMode.HALF_EVEN);
     }
 
 
@@ -92,37 +91,5 @@ public class ExchangeTransaction {
     public void setConvertedAmount(BigDecimal convertedAmount) {
         this.convertedAmount = convertedAmount;
     }
-
-    //    public Currency getTargetCurrency() {
-//        return targetCurrency;
-//    }
-//
-//    public void setTargetCurrency(Currency targetCurrency) {
-//        this.targetCurrency = targetCurrency;
-//    }
-//
-//    public double getRate() {
-//        return rate;
-//    }
-//
-//    public void setRate(double rate) {
-//        this.rate = rate;
-//    }
-//
-//    public double getAmount() {
-//        return amount;
-//    }
-//
-//    public void setAmount(double amount) {
-//        this.amount = amount;
-//    }
-//
-//    public double getConvertedAmount() {
-//        return convertedAmount;
-//    }
-//
-//    public void setConvertedAmount(double convertedAmount) {
-//        this.convertedAmount = convertedAmount;
-//    }
 
 }

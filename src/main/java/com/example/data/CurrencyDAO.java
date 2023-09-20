@@ -13,26 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class CurrencyDAO extends EntityDAO {
-
-
-//    private ConnectionPool connectionPool;
-
-//    public Connection getConnectionPool() {
-//        try {
-//            return connectionPool.getConnection();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//    public CurrencyDbDAO() {
-//        try {
-//            this.connectionPool = CurrencyBDConnectionPool.create();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     public Optional<Currency> getCurrencyByCode(String codeCurrency) {
         String getByCodeCommand = "SELECT * FROM currencies WHERE code = ?";
 
@@ -66,36 +46,6 @@ public class CurrencyDAO extends EntityDAO {
         getPool().releaseConnection(connection);
         return Optional.empty();
     }
-
-
-//    public Optional<List<ExchangeRate>> getAllExchangeRates() {
-//        String getAllExchangeRateCommand = "SELECT exchangeRates.id, base.Code AS Base, target.Code AS Target, exchangeRates.rate\n" +
-//                "FROM exchangeRates\n" +
-//                "INNER JOIN currencies base ON exchangeRates.BaseCurrencyId = base.ID\n" +
-//                "INNER JOIN currencies target ON exchangeRates.TargetCurrencyId = target.ID\n";
-//
-//        try (Connection connection = getConnectionPool();
-//             PreparedStatement statement = connection.prepareStatement(getAllExchangeRateCommand)) {
-//            statement.execute();
-//            ResultSet resultSet = statement.getResultSet();
-//            if (resultSet.isBeforeFirst()) {
-//                ArrayList<ExchangeRate> exchangeRates = new ArrayList<>();
-//                while (resultSet.next()) {
-//                    ExchangeRate exchangeRate = new ExchangeRate();
-//                    exchangeRate.setId(resultSet.getInt("id"));
-//                    exchangeRate.setBaseCurrency(getCurrencyByCode(resultSet.getString("base")));
-//                    exchangeRate.setTargetCurrency(getCurrencyByCode(resultSet.getString("target")));
-//                    exchangeRate.setRate(BigDecimal.valueOf(resultSet.getDouble("rate")));
-//                    exchangeRates.add(exchangeRate);
-//                }
-//                return Optional.of(exchangeRates);
-//            } else {
-//                return Optional.empty();
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
     public Optional<List<Currency>> getAllCurrency() {
         String getAllCurrencyCommand = "SELECT * FROM currencies";
@@ -148,43 +98,8 @@ public class CurrencyDAO extends EntityDAO {
             } else {
                 throw new RuntimeException(e);
             }
-
-
-//            throw new RuntimeException(e);
         }
     }
-
-//    public Optional<List<ExchangeRate>> getAllExchangeRates() {
-//        String getAllExchangeRateCommand = "SELECT * FROM exchangeRates";
-//
-//        Connection connection = getConnectionPool();
-//        PreparedStatement statement;
-//        try {
-//            statement = connection.prepareStatement(getAllExchangeRateCommand);
-//
-//            statement.execute();
-//            ResultSet resultSet = statement.getResultSet();
-//            if (resultSet.isBeforeFirst()) {
-//                List<ExchangeRate> exchangeRates = new ArrayList<>();
-//                while (resultSet.next()) {
-//                    exchangeRates.add(new ExchangeRate(
-//                            resultSet.getInt("id"),
-//                            resultSet.getInt("baseCurrencyId"),
-//                            resultSet.getInt("targetCurrencyId"),
-//                            resultSet.getBigDecimal("rate")));
-//                }
-//                connectionPool.releaseConnection(connection);
-//                return Optional.of(exchangeRates);
-//            } else {
-//                connectionPool.releaseConnection(connection);
-//                return Optional.empty();
-//            }
-//
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
 
     public Optional<Currency> getCurrencyById(Integer id) {
         String getByIdCommand = "SELECT * FROM currencies WHERE ID = ?";
@@ -213,11 +128,9 @@ public class CurrencyDAO extends EntityDAO {
                     return Optional.empty();
                 }
             }
-//            getPool().releaseConnection(connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-//        getPool().releaseConnection(connection);
         return Optional.empty();
     }
 
@@ -225,35 +138,5 @@ public class CurrencyDAO extends EntityDAO {
         statement.close();
         getPool().releaseConnection(connection);
     }
-
-//    public Optional<List<Currency>> getAllById(int b, int t) {
-//        String getByIdCommand = "SELECT * FROM currencies WHERE ID IN (?, ?)";
-//
-//        try (Connection connection = getConnectionPool();
-//             PreparedStatement statement = connection.prepareStatement(getByIdCommand)) {
-//
-//            statement.setInt(1, b);
-//            statement.setInt(2, t);
-//            statement.execute();
-//            ResultSet resultSet = statement.getResultSet();
-//            if (resultSet.isBeforeFirst()) {
-//                List<Currency> currencies = new ArrayList<>();
-//                while (resultSet.next()) {
-//                    currencies.add(new Currency(
-//                            resultSet.getInt("id"),
-//                            resultSet.getString("code"),
-//                            resultSet.getString("fullName"),
-//                            resultSet.getString("sign")));
-//                }
-////                connectionPool.releaseConnection(connection);
-//                return Optional.of(currencies);
-//            } else {
-//                connectionPool.releaseConnection(connection);
-//                return Optional.empty();
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 }
 

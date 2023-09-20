@@ -14,15 +14,14 @@ import static java.util.Map.entry;
 public class Util {
 
     public static final int CORRECT_COUNT_LETTER_CURRENCY_NAME = 3;
-    public static final int CODE_POSITION_IN_URL = 5;//6
+    public static final int CODE_POSITION_IN_URL = 5;
     public static final int CORRECT_COUNT_LETTER_EXCHANGE_RATE_NAME = 6;
 
     static ObjectMapper objectMapper = new ObjectMapper();
-    private static PrintWriter writer;
 
     public static void getJsonResponse(HttpServletResponse response, int codeResponse, Object obj) throws IOException {
         String jsonResponse = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
-        writer = response.getWriter();
+        PrintWriter writer = response.getWriter();
         response.setStatus(codeResponse);
         writer.println(jsonResponse);
     }
@@ -30,15 +29,6 @@ public class Util {
     public static String getCodeFromURL(HttpServletRequest request) throws ValidationException {
         String[] splitURL = getSplitURL(request);
         return splitURL[splitURL.length - 1].toUpperCase();
-//        try {
-//            if (code.length() > CORRECT_COUNT_LETTER_CURRENCY_NAME) {
-//                throw new ValidationException("No currency code in the address - 400");
-//            } else {
-//                return code;
-//            }
-//        } catch (ValidationException e) {
-//            throw new ValidationException(e.getMessage());
-//        }
     }
 
     public static Map<String, String> checkRequestParameterForCurrency(HttpServletRequest request) throws ValidationException {
@@ -174,7 +164,6 @@ public class Util {
         }
         return true;
     }
-
 }
 
 

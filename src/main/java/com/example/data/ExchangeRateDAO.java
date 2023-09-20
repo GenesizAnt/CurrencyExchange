@@ -14,8 +14,6 @@ import java.util.Optional;
 
 public class ExchangeRateDAO extends EntityDAO {
 
-//    private ConnectionPool connectionPool;
-
     public Optional<ExchangeRate> getExchangeRateCode(String baseCurrencyCode, String targetCurrencyCode) {
         String getExchangeRateByCodeCommand = "SELECT exchangeRates.id, base.id AS Base, target.id AS Target, exchangeRates.rate\n" +
                 "FROM exchangeRates\n" +
@@ -49,7 +47,6 @@ public class ExchangeRateDAO extends EntityDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-//        getPool().releaseConnection(connection);
         return Optional.empty();
     }
 

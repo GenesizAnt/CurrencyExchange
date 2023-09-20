@@ -5,19 +5,14 @@ import com.example.controller.RequestValidation;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import java.io.IOException;
 
-import static com.example.Util.*;
+import java.io.IOException;
 
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateByCodeServlet extends RequestValidation {
 
-//    private QueriesControl queriesControl = new QueriesControl();
-//    private ErrorQuery errorQuery;
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         getExchangeRate(request, response);
 
     }
@@ -33,21 +28,8 @@ public class ExchangeRateByCodeServlet extends RequestValidation {
     }
 
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         patchExchangeRate(request, response);
 
-//        String empty = "";
-//        String rate = request.getParameter("rate");
-//
-//        if (isCorrectCodeExchangeRate(request) && !(rate.equals(empty)) && rate.matches("\\d*[.]?\\d{1,6}\\b")
-//                && !(rate.matches("[a-zA-Zа-яА-Я]+"))) {
-//            String exchangeRateCode = getCodeFromURL(request);
-//            queriesControl.patchExchangeRate(exchangeRateCode, rate, response);
-//        } else {
-//            response.setStatus(400);
-//            errorQuery = new ErrorQuery("Incorrect request - 400");
-//            getJsonResponse(errorQuery, response);
-//        }
     }
 
 

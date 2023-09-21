@@ -1,5 +1,6 @@
-package com.example.dto;
+package com.example.dto.mapper;
 
+import com.example.dto.CurrencyDTO;
 import com.example.entity.Currency;
 import org.modelmapper.*;
 import org.modelmapper.convention.MatchingStrategies;

@@ -17,7 +17,7 @@ public class Util {
     public static final int CODE_POSITION_IN_URL = 5;
     public static final int CORRECT_COUNT_LETTER_EXCHANGE_RATE_NAME = 6;
 
-    static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void getJsonResponse(HttpServletResponse response, int codeResponse, Object obj) throws IOException {
         String jsonResponse = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);

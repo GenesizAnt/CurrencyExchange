@@ -1,10 +1,10 @@
 package com.example.servise;
 
-import com.example.data.ExchangeRateDAO;
+import com.example.data.dao.ExchangeRateDAO;
 import com.example.dto.ExchangeRateDTO;
 import com.example.entity.ExchangeRate;
 import com.example.error.DatabaseException;
-import com.example.dto.ExchangeRateMapper;
+import com.example.dto.mapper.ExchangeRateMapper;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -49,9 +49,9 @@ public class ExchangeRateService {
         }
     }
 
-    public void insertExchangeRate(ExchangeRateDTO exchangeRateDTO) {
+    public void saveExchangeRate(ExchangeRateDTO exchangeRateDTO) {
         try {
-            exchangeRateDAO.insertExchangeRate(exchangeRateDTO.getBaseCurrency().getId(),
+            exchangeRateDAO.saveExchangeRate(exchangeRateDTO.getBaseCurrency().getId(),
                                                exchangeRateDTO.getTargetCurrency().getId(),
                                                exchangeRateDTO.getRate());
         } catch (Exception e) {
@@ -71,9 +71,9 @@ public class ExchangeRateService {
         return exchangeRate.isPresent();
     }
 
-    public void patchExchangeRate(ExchangeRateDTO exchangeRateDTO, BigDecimal rate) {
+    public void updateExchangeRate(ExchangeRateDTO exchangeRateDTO, BigDecimal rate) {
         try {
-            exchangeRateDAO.patchExchangeRate(exchangeRateDTO, rate);
+            exchangeRateDAO.updateExchangeRate(exchangeRateDTO, rate);
         } catch (Exception e) {
             throw new RuntimeException("Database is unavailable - 500");
         }

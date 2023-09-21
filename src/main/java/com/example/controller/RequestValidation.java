@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.data.ExchangeTransaction;
+import com.example.dto.ExchangeTransactionDTO;
 import com.example.dto.ExchangeRateDTO;
 import com.example.error.*;
 import com.example.dto.CurrencyDTO;
@@ -57,13 +57,13 @@ public class RequestValidation extends HttpServlet {
         }
     }
 
-    public void postCurrency(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void saveNewCurrency(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
 
             Map<String, String> requestParameter = checkRequestParameterForCurrency(request);
 
             try {
-                currencyService.insertCurrency(requestParameter.get("code"),
+                currencyService.saveNewCurrency(requestParameter.get("code"),
                         requestParameter.get("name"),
                         requestParameter.get("sign"));
 
@@ -123,21 +123,21 @@ public class RequestValidation extends HttpServlet {
         }
     }
 
-    public void postExchangeRate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void saveExchangeRate(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
 
             Map<String, String> requestParameter = checkRequestParameterForSaveExchangeRate(request);
-            Optional<ExchangeRateDTO> saveExchangeRateDTO = exchangeRateService.getExchangeRateForSave(requestParameter);
+            Optional<ExchangeRateDTO> exchangeRateForSave = exchangeRateService.getExchangeRateForSave(requestParameter);
 
-            if (exchangeRateService.isExchangeRateExist(saveExchangeRateDTO.get())) {
+            if (exchangeRateService.isExchangeRateExist(exchangeRateForSave.get())) {
                 getJsonResponse(response, 409, "Exchange rate with this currency already exists - 409");
             } else {
 
-                exchangeRateService.insertExchangeRate(saveExchangeRateDTO.get());
+                exchangeRateService.saveExchangeRate(exchangeRateForSave.get());
                 try {
                     Optional<ExchangeRateDTO> checkExchangeRateDTO = exchangeRateService.getExchangeRateByCode(
-                            saveExchangeRateDTO.get().getBaseCurrency().getCode(),
-                            saveExchangeRateDTO.get().getTargetCurrency().getCode());
+                            exchangeRateForSave.get().getBaseCurrency().getCode(),
+                            exchangeRateForSave.get().getTargetCurrency().getCode());
 
                     if (checkExchangeRateDTO.isPresent()) {
                         getJsonResponse(response, 200, checkExchangeRateDTO.get());
@@ -154,7 +154,7 @@ public class RequestValidation extends HttpServlet {
         }
     }
 
-    public void patchExchangeRate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void updateExchangeRate(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
 
             Map<String, String> requestParameter = checkRequestParameterForPatchExchangeRate(request);
@@ -163,7 +163,7 @@ public class RequestValidation extends HttpServlet {
                     currenciesForExchange[1]);
 
             if (exchangeRateDTO.isPresent()) {
-                exchangeRateService.patchExchangeRate(exchangeRateDTO.get(), new BigDecimal(requestParameter.get("rate")));
+                exchangeRateService.updateExchangeRate(exchangeRateDTO.get(), new BigDecimal(requestParameter.get("rate")));
             } else {
                 getJsonResponse(response, 404, new ExchangeRateNotFoundException("Exchange transaction rate not found - 404"));
             }
@@ -199,31 +199,31 @@ public class RequestValidation extends HttpServlet {
 
             Optional<ExchangeRateDTO> exchangeDirectRate;
             Optional<ExchangeRateDTO> exchangeReverseRate;
-            Optional<List<ExchangeRateDTO>> exchangesThroughUSDRate;
+            Optional<List<ExchangeRateDTO>> exchangeThroughUSDRate;
 
             try {
                 exchangeDirectRate = exchangeRateService.getExchangeRateByCode(baseCurrencyCode.get().getCode(),
                         targetCurrencyCode.get().getCode());
                 exchangeReverseRate = exchangeRateService.getExchangeRateByCode(targetCurrencyCode.get().getCode(),
                         baseCurrencyCode.get().getCode());
-                exchangesThroughUSDRate = exchangeRateService.getExchangeThroughTransaction(baseCurrencyCode.get().getId(),
+                exchangeThroughUSDRate = exchangeRateService.getExchangeThroughTransaction(baseCurrencyCode.get().getId(),
                         targetCurrencyCode.get().getId());
 
                 if (exchangeDirectRate.isPresent()) {
-                    ExchangeTransaction exchangeTransaction = new ExchangeTransaction(exchangeDirectRate.get());
-                    exchangeTransaction.calculateExchangeTransaction(amountForExchange);
-                    getJsonResponse(response, 200, exchangeTransaction);
+                    ExchangeTransactionDTO exchangeTransactionDTO = new ExchangeTransactionDTO(exchangeDirectRate.get());
+                    exchangeTransactionDTO.calculateExchangeTransaction(amountForExchange);
+                    getJsonResponse(response, 200, exchangeTransactionDTO);
                 } else if (exchangeReverseRate.isPresent()) {
-                    ExchangeTransaction exchangeTransaction = new ExchangeTransaction(exchangeReverseRate.get().getTargetCurrency(),
+                    ExchangeTransactionDTO exchangeTransactionDTO = new ExchangeTransactionDTO(exchangeReverseRate.get().getTargetCurrency(),
                             exchangeReverseRate.get().getBaseCurrency(),
                             exchangeReverseRate.get().getRate());
-                    exchangeTransaction.calculateReverseExchangeTransaction(amountForExchange);
-                    getJsonResponse(response, 200, exchangeTransaction);
-                } else if (exchangesThroughUSDRate.isPresent()) {
-                    ExchangeTransaction exchangeTransaction = new ExchangeTransaction(exchangesThroughUSDRate.get().get(0),
-                            exchangesThroughUSDRate.get().get(1));
-                    exchangeTransaction.calculateExchangeTransactionThroughUSD(amountForExchange, exchangeTransaction.getRate());
-                    getJsonResponse(response, 200, exchangeTransaction);
+                    exchangeTransactionDTO.calculateReverseExchangeTransaction(amountForExchange);
+                    getJsonResponse(response, 200, exchangeTransactionDTO);
+                } else if (exchangeThroughUSDRate.isPresent()) {
+                    ExchangeTransactionDTO exchangeTransactionDTO = new ExchangeTransactionDTO(exchangeThroughUSDRate.get().get(0),
+                            exchangeThroughUSDRate.get().get(1));
+                    exchangeTransactionDTO.calculateExchangeTransactionThroughUSD(amountForExchange, exchangeTransactionDTO.getRate());
+                    getJsonResponse(response, 200, exchangeTransactionDTO);
                 } else {
                     getJsonResponse(response, 404, new ExchangeRateNotFoundException("Exchange transaction rate not found - 404").getMessage());
                 }

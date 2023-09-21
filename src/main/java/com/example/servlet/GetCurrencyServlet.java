@@ -1,4 +1,4 @@
-package com.example.currencyservlet;
+package com.example.servlet;
 
 import com.example.controller.RequestValidation;
 
@@ -8,11 +8,11 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 
-@WebServlet("/exchange")
-public class ExchangeCurrenciesServlet extends RequestValidation {
+@WebServlet("/currency/*")
+public class GetCurrencyServlet extends RequestValidation {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        getExchangeTransaction(request, response);
+        getCurrency(request, response);
 
     }
 

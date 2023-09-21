@@ -1,4 +1,4 @@
-package com.example.data;
+package com.example.data.dao;
 
 import com.example.entity.Currency;
 import com.example.error.DatabaseException;
@@ -58,16 +58,16 @@ public class CurrencyDAO extends EntityDAO {
             statement.execute();
             ResultSet resultSet = statement.getResultSet();
             if (resultSet.isBeforeFirst()) {
-                ArrayList<Currency> currencyList = new ArrayList<>();
+                ArrayList<Currency> allCurrency = new ArrayList<>();
                 while (resultSet.next()) {
-                    currencyList.add(new Currency(
+                    allCurrency.add(new Currency(
                             resultSet.getInt("id"),
                             resultSet.getString("code"),
                             resultSet.getString("fullName"),
                             resultSet.getString("sign")));
                 }
                 dialOut(connection, statement);
-                return Optional.of(currencyList);
+                return Optional.of(allCurrency);
             } else {
                 dialOut(connection, statement);
                 return Optional.empty();
@@ -77,13 +77,13 @@ public class CurrencyDAO extends EntityDAO {
         }
     }
 
-    public void insertCurrency(String code, String name, String sign) {
-        String insertCurrencyCommand = "INSERT INTO currencies (code, fullName, sign) VALUES (?, ?, ?)";
+    public void saveNewCurrency(String code, String name, String sign) {
+        String saveCurrencyCommand = "INSERT INTO currencies (code, fullName, sign) VALUES (?, ?, ?)";
 
         Connection connection = getConnection();
         PreparedStatement statement;
         try {
-            statement = connection.prepareStatement(insertCurrencyCommand);
+            statement = connection.prepareStatement(saveCurrencyCommand);
 
             statement.setString(1, code);
             statement.setString(2, name);

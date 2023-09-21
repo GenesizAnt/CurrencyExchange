@@ -1,4 +1,4 @@
-package com.example.currencyservlet;
+package com.example.servlet;
 
 import com.example.controller.RequestValidation;
 
@@ -18,7 +18,7 @@ public class CurrenciesServlet extends RequestValidation {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        postCurrency(request, response);
+        saveNewCurrency(request, response);
 
     }
 }

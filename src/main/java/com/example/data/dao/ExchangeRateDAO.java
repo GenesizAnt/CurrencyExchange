@@ -1,4 +1,4 @@
-package com.example.data;
+package com.example.data.dao;
 
 import com.example.dto.ExchangeRateDTO;
 import com.example.entity.ExchangeRate;
@@ -50,13 +50,13 @@ public class ExchangeRateDAO extends EntityDAO {
         return Optional.empty();
     }
 
-    public void insertExchangeRate(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) {
-        String insertExchangeCommand = "INSERT INTO exchangeRates (baseCurrencyId, targetCurrencyId, rate) VALUES (?, ?, ?)";
+    public void saveExchangeRate(int baseCurrencyId, int targetCurrencyId, BigDecimal rate) {
+        String saveExchangeCommand = "INSERT INTO exchangeRates (baseCurrencyId, targetCurrencyId, rate) VALUES (?, ?, ?)";
 
         Connection connection = getConnection();
         PreparedStatement statement;
         try {
-            statement = connection.prepareStatement(insertExchangeCommand);
+            statement = connection.prepareStatement(saveExchangeCommand);
 
             statement.setInt(1, baseCurrencyId);
             statement.setInt(2, targetCurrencyId);
@@ -69,7 +69,7 @@ public class ExchangeRateDAO extends EntityDAO {
         }
     }
 
-    public void patchExchangeRate(ExchangeRateDTO exchangeRateDTO, BigDecimal rate) {
+    public void updateExchangeRate(ExchangeRateDTO exchangeRateDTO, BigDecimal rate) {
 
         String getByCodeCommand = "UPDATE exchangeRates SET rate = ? WHERE BaseCurrencyId = ? AND TargetCurrencyId = ?";
 

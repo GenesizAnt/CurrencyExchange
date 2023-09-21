@@ -1,4 +1,4 @@
-package com.example.currencyservlet;
+package com.example.servlet;
 
 import com.example.controller.RequestValidation;
 
@@ -28,7 +28,7 @@ public class ExchangeRateByCodeServlet extends RequestValidation {
     }
 
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        patchExchangeRate(request, response);
+        updateExchangeRate(request, response);
 
     }
 

@@ -1,12 +1,9 @@
-package com.example.data;
-
-import com.example.dto.CurrencyDTO;
-import com.example.dto.ExchangeRateDTO;
+package com.example.dto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class ExchangeTransaction {
+public class ExchangeTransactionDTO {
 
     private CurrencyDTO baseCurrency;
     private CurrencyDTO targetCurrency;
@@ -14,23 +11,23 @@ public class ExchangeTransaction {
     private BigDecimal amount;
     private BigDecimal convertedAmount;
 
-    public ExchangeTransaction(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, BigDecimal rate) {
+    public ExchangeTransactionDTO(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, BigDecimal rate) {
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
         this.rate = rate;
     }
 
-    public ExchangeTransaction(ExchangeRateDTO exchangeRates) {
+    public ExchangeTransactionDTO(ExchangeRateDTO exchangeRates) {
         this.baseCurrency = exchangeRates.getBaseCurrency();
         this.targetCurrency = exchangeRates.getTargetCurrency();
         this.rate = exchangeRates.getRate();
     }
 
-    public ExchangeTransaction() {
+    public ExchangeTransactionDTO() {
 
     }
 
-    public ExchangeTransaction(ExchangeRateDTO baseExchangeRateDTO, ExchangeRateDTO targetExchangeRateDTO) {
+    public ExchangeTransactionDTO(ExchangeRateDTO baseExchangeRateDTO, ExchangeRateDTO targetExchangeRateDTO) {
         this.baseCurrency = baseExchangeRateDTO.getTargetCurrency();
         this.targetCurrency = targetExchangeRateDTO.getTargetCurrency();
         this.rate = baseExchangeRateDTO.getRate().divide(targetExchangeRateDTO.getRate(), 2, RoundingMode.HALF_EVEN);

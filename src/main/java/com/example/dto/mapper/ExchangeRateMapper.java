@@ -1,5 +1,7 @@
-package com.example.dto;
+package com.example.dto.mapper;
 
+import com.example.dto.CurrencyDTO;
+import com.example.dto.ExchangeRateDTO;
 import com.example.entity.ExchangeRate;
 import com.example.servise.CurrencyService;
 import org.modelmapper.*;
@@ -32,7 +34,7 @@ public class ExchangeRateMapper {
     public List<ExchangeRateDTO> toDtoList(List<ExchangeRate> exchangeRates) {
 
         ModelMapper mapper = getMapper();
-        List<ExchangeRateDTO> list = exchangeRates.stream()
+        List<ExchangeRateDTO> exchangeRateDTOList = exchangeRates.stream()
                 .map(exchangeRate -> {
                     ExchangeRateDTO exchangeRateDTO = mapper.map(exchangeRate, ExchangeRateDTO.class);
                     CurrencyDTO baseCurrency = currencyService.getCurrencyById(exchangeRate.getBaseCurrency()).get();
@@ -42,7 +44,7 @@ public class ExchangeRateMapper {
                     return exchangeRateDTO;
                 })
                 .collect(Collectors.toList());
-        return list;
+        return exchangeRateDTOList;
     }
 
     public ExchangeRateDTO toDto(ExchangeRate exchangeRate) {

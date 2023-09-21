@@ -1,11 +1,14 @@
-package com.example.data;
+package com.example.data.dao;
+
+import com.example.data.ConnectionPool;
+import com.example.data.CurrencyBDConnectionPool;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class EntityDAO {
 
-    private ConnectionPool connectionPool;
+    private final ConnectionPool connectionPool;
 
     public Connection getConnection() {
         try {

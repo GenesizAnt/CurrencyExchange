@@ -96,8 +96,6 @@ public class RequestValidation extends HttpServlet {
             getJsonResponse(response, 500, e.getMessage());
         }
     }
-    //ToDo в jsp старт добавить как работать с проектом https://zhukovsd.github.io/java-backend-learning-course/Projects/CurrencyExchange/
-    //ToDo выложить коллекцию постман в проект
 
     public void getExchangeRate(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
